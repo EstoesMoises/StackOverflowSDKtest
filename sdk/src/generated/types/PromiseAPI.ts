@@ -2027,48 +2027,6 @@ export class PromiseQuestionsMainApi {
     }
 
     /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
-        const observableOptions = wrapOptions(_options);
-        const result = this.api.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
-        return result.toPromise();
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<PaginatedQuestions> {
-        const observableOptions = wrapOptions(_options);
-        const result = this.api.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
-        return result.toPromise();
-    }
-
-    /**
      * Creates a question.
      * Create a question
      * @param [questionRequestModel] 
@@ -2393,6 +2351,67 @@ export class PromiseQuestionsMainApi {
     public questionsQuestionIdUpvotePost(questionId: number, _options?: PromiseConfigurationOptions): Promise<QuestionResponseModel> {
         const observableOptions = wrapOptions(_options);
         const result = this.api.questionsQuestionIdUpvotePost(questionId, observableOptions);
+        return result.toPromise();
+    }
+
+
+}
+
+
+
+import { ObservableQuestionsMain2Api } from './ObservableAPI';
+
+import { QuestionsMain2ApiRequestFactory, QuestionsMain2ApiResponseProcessor} from "../apis/QuestionsMain2Api";
+export class PromiseQuestionsMain2Api {
+    private api: ObservableQuestionsMain2Api
+
+    public constructor(
+        configuration: Configuration,
+        requestFactory?: QuestionsMain2ApiRequestFactory,
+        responseProcessor?: QuestionsMain2ApiResponseProcessor
+    ) {
+        this.api = new ObservableQuestionsMain2Api(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<PaginatedQuestions> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
         return result.toPromise();
     }
 

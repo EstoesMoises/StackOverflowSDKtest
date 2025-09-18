@@ -2984,88 +2984,6 @@ export class ObjectImagesTeamsApi {
 import { ObservableQuestionsMainApi } from "./ObservableAPI";
 import { QuestionsMainApiRequestFactory, QuestionsMainApiResponseProcessor} from "../apis/QuestionsMainApi";
 
-export interface QuestionsMainApiQuestionsGetRequest {
-    /**
-     * 
-     * Minimum: 1
-     * Maximum: 2147483647
-     * Defaults to: undefined
-     * @type number
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    page?: number
-    /**
-     * 
-     * Defaults to: undefined
-     * @type 15 | 30 | 50 | 100
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    pageSize?: 15 | 30 | 50 | 100
-    /**
-     * 
-     * Defaults to: undefined
-     * @type QuestionSortParameter
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    sort?: QuestionSortParameter
-    /**
-     * 
-     * Defaults to: undefined
-     * @type SortOrder
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    order?: SortOrder
-    /**
-     * 
-     * Defaults to: undefined
-     * @type boolean
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    isAnswered?: boolean
-    /**
-     * 
-     * Defaults to: undefined
-     * @type boolean
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    hasAcceptedAnswer?: boolean
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Array&lt;number&gt;
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    questionId?: Array<number>
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Array&lt;number&gt;
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    tagId?: Array<number>
-    /**
-     * 
-     * Defaults to: undefined
-     * @type number
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    authorId?: number
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Date
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    _from?: Date
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Date
-     * @memberof QuestionsMainApiquestionsGet
-     */
-    to?: Date
-}
-
 export interface QuestionsMainApiQuestionsPostRequest {
     /**
      * 
@@ -3286,24 +3204,6 @@ export class ObjectQuestionsMainApi {
 
     public constructor(configuration: Configuration, requestFactory?: QuestionsMainApiRequestFactory, responseProcessor?: QuestionsMainApiResponseProcessor) {
         this.api = new ObservableQuestionsMainApi(configuration, requestFactory, responseProcessor);
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param param the request object
-     */
-    public questionsGetWithHttpInfo(param: QuestionsMainApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
-        return this.api.questionsGetWithHttpInfo(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param param the request object
-     */
-    public questionsGet(param: QuestionsMainApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
-        return this.api.questionsGet(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 
     /**
@@ -3556,6 +3456,118 @@ export class ObjectQuestionsMainApi {
      */
     public questionsQuestionIdUpvotePost(param: QuestionsMainApiQuestionsQuestionIdUpvotePostRequest, options?: ConfigurationOptions): Promise<QuestionResponseModel> {
         return this.api.questionsQuestionIdUpvotePost(param.questionId,  options).toPromise();
+    }
+
+}
+
+import { ObservableQuestionsMain2Api } from "./ObservableAPI";
+import { QuestionsMain2ApiRequestFactory, QuestionsMain2ApiResponseProcessor} from "../apis/QuestionsMain2Api";
+
+export interface QuestionsMain2ApiQuestionsGetRequest {
+    /**
+     * 
+     * Minimum: 1
+     * Maximum: 2147483647
+     * Defaults to: undefined
+     * @type number
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    page?: number
+    /**
+     * 
+     * Defaults to: undefined
+     * @type 15 | 30 | 50 | 100
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    pageSize?: 15 | 30 | 50 | 100
+    /**
+     * 
+     * Defaults to: undefined
+     * @type QuestionSortParameter
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    sort?: QuestionSortParameter
+    /**
+     * 
+     * Defaults to: undefined
+     * @type SortOrder
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    order?: SortOrder
+    /**
+     * 
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    isAnswered?: boolean
+    /**
+     * 
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    hasAcceptedAnswer?: boolean
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Array&lt;number&gt;
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    questionId?: Array<number>
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Array&lt;number&gt;
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    tagId?: Array<number>
+    /**
+     * 
+     * Defaults to: undefined
+     * @type number
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    authorId?: number
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Date
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    _from?: Date
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Date
+     * @memberof QuestionsMain2ApiquestionsGet
+     */
+    to?: Date
+}
+
+export class ObjectQuestionsMain2Api {
+    private api: ObservableQuestionsMain2Api
+
+    public constructor(configuration: Configuration, requestFactory?: QuestionsMain2ApiRequestFactory, responseProcessor?: QuestionsMain2ApiResponseProcessor) {
+        this.api = new ObservableQuestionsMain2Api(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param param the request object
+     */
+    public questionsGetWithHttpInfo(param: QuestionsMain2ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
+        return this.api.questionsGetWithHttpInfo(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param param the request object
+     */
+    public questionsGet(param: QuestionsMain2ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
+        return this.api.questionsGet(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 
 }
