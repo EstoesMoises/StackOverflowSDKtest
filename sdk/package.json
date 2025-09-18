@@ -24,8 +24,10 @@
     "sdk:check": "node automation/check-updates.mjs",
     "sdk:check:info": "node automation/check-updates.mjs --info",
     "sdk:update": "node automation/check-updates.mjs && pnpm build",
-    "sdk:update:full": "node automation/check-updates.mjs",
+    "sdk:update:full": "CREATE_PR=true node automation/check-updates.mjs",
+    "sdk:update:no-pr": "CREATE_PR=false node automation/check-updates.mjs",
     "sdk:analyze": "node automation/analyze-only.mjs",
+    "sdk:create-pr": "node automation/create-pr.mjs",
     "sdk:git:status": "git status --porcelain && git branch --show-current"
   },
   "keywords": [

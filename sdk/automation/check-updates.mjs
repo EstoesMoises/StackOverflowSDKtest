@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { GitIntegration } from './git-integration.mjs';
 import { ChangeAnalyzer } from './change-analyzer.mjs';
+import { PRAutomation } from './pr-automation.mjs';
 
 class BasicSDKUpdater {
   constructor() {
@@ -12,7 +13,8 @@ class BasicSDKUpdater {
       // You'll need to set this to your actual OpenAPI JSON URL or local file path
       openApiJsonUrl: process.env.OPENAPI_JSON_URL || './src/source/swagger.json',
       localJsonPath: './openapi.json',
-      metadataFile: './automation-metadata.json'
+      metadataFile: './automation-metadata.json',
+      createPR: process.env.CREATE_PR !== 'false' // Default to true, set CREATE_PR=false to disable
     };
     
     this.git = new GitIntegration({
@@ -23,6 +25,12 @@ class BasicSDKUpdater {
     this.analyzer = new ChangeAnalyzer({
       generatedDir: './src/generated',
       clientDir: './src/client'
+    });
+    
+    this.pr = new PRAutomation({
+      defaultBranch: 'main', // Change to 'master' if that's your default
+      prLabels: ['auto-generated', 'sdk-update'],
+      githubToken: process.env.GITHUB_TOKEN
     });
   }
 
@@ -63,6 +71,20 @@ class BasicSDKUpdater {
           console.log('🔗 Branch pushed to remote successfully');
         }
         
+        // Create Pull Request if enabled
+        if (this.config.createPR) {
+          console.log('📝 Creating pull request...');
+          const prResult = await this.pr.createPullRequest(gitResult.branchName, analysis);
+          
+          if (prResult.success) {
+            console.log(`✅ Pull request created: ${prResult.url}`);
+          } else {
+            console.log('⚠️  PR creation instructions provided above');
+          }
+        } else {
+          console.log('ℹ️  PR creation disabled. Set CREATE_PR=true to enable.');
+        }
+        
         // Generate and display summary
         const summary = this.analyzer.generateSummary(analysis);
         console.log('\n' + '='.repeat(50));
@@ -77,7 +99,8 @@ class BasicSDKUpdater {
           branchName: gitResult.branchName,
           changedFiles: gitResult.changedFiles,
           analysis: analysis,
-          riskLevel: analysis.riskAssessment?.level
+          riskLevel: analysis.riskAssessment?.level,
+          prResult: this.config.createPR ? prResult : null
         };
       }
       
