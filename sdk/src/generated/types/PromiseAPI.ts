@@ -2359,18 +2359,18 @@ export class PromiseQuestionsMainApi {
 
 
 
-import { ObservableQuestionsMain2Api } from './ObservableAPI';
+import { ObservableQuestionsMain21231Api } from './ObservableAPI';
 
-import { QuestionsMain2ApiRequestFactory, QuestionsMain2ApiResponseProcessor} from "../apis/QuestionsMain2Api";
-export class PromiseQuestionsMain2Api {
-    private api: ObservableQuestionsMain2Api
+import { QuestionsMain21231ApiRequestFactory, QuestionsMain21231ApiResponseProcessor} from "../apis/QuestionsMain21231Api";
+export class PromiseQuestionsMain21231Api {
+    private api: ObservableQuestionsMain21231Api
 
     public constructor(
         configuration: Configuration,
-        requestFactory?: QuestionsMain2ApiRequestFactory,
-        responseProcessor?: QuestionsMain2ApiResponseProcessor
+        requestFactory?: QuestionsMain21231ApiRequestFactory,
+        responseProcessor?: QuestionsMain21231ApiResponseProcessor
     ) {
-        this.api = new ObservableQuestionsMain2Api(configuration, requestFactory, responseProcessor);
+        this.api = new ObservableQuestionsMain21231Api(configuration, requestFactory, responseProcessor);
     }
 
     /**
