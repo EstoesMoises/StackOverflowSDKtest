@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
 import { GitIntegration } from './git-integration.mjs';
+import { ChangeAnalyzer } from './change-analyzer.mjs';
 
 class BasicSDKUpdater {
   constructor() {
@@ -17,6 +18,11 @@ class BasicSDKUpdater {
     this.git = new GitIntegration({
       branchPrefix: 'sdk-auto-update',
       defaultBranch: 'main' // Change to 'master' if that's your default
+    });
+    
+    this.analyzer = new ChangeAnalyzer({
+      generatedDir: './src/generated',
+      clientDir: './src/client'
     });
   }
 
@@ -34,19 +40,34 @@ class BasicSDKUpdater {
       console.log('📝 Changes detected! Generating new code...');
       await this.generateCode();
       
+      console.log('📊 Analyzing changes...');
+      const analysis = await this.analyzer.analyzeChanges();
+      
       console.log('🔧 Handling Git workflow...');
       const gitResult = await this.git.handleChanges({
         specUpdated: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        analysis: analysis
       });
       
       if (gitResult) {
         console.log(`✅ Created branch: ${gitResult.branchName}`);
         console.log(`📁 Changed files: ${gitResult.changedFiles}`);
+        console.log(`⚠️  Risk level: ${analysis.riskAssessment?.level || 'UNKNOWN'}`);
+        
+        if (analysis.wrapperImpact?.affectedClients?.length > 0) {
+          console.log(`🔧 Affected wrapper clients: ${analysis.wrapperImpact.affectedClients.length}`);
+        }
         
         if (gitResult.remoteUrl) {
           console.log('🔗 Branch pushed to remote successfully');
         }
+        
+        // Generate and display summary
+        const summary = this.analyzer.generateSummary(analysis);
+        console.log('\n' + '='.repeat(50));
+        console.log(summary);
+        console.log('='.repeat(50) + '\n');
         
         // Optionally switch back to main branch
         // this.git.switchToDefault();
@@ -54,7 +75,9 @@ class BasicSDKUpdater {
         return {
           updated: true,
           branchName: gitResult.branchName,
-          changedFiles: gitResult.changedFiles
+          changedFiles: gitResult.changedFiles,
+          analysis: analysis,
+          riskLevel: analysis.riskAssessment?.level
         };
       }
       

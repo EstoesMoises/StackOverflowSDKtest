@@ -24,7 +24,8 @@
     "sdk:check": "node automation/check-updates.mjs",
     "sdk:check:info": "node automation/check-updates.mjs --info",
     "sdk:update": "node automation/check-updates.mjs && pnpm build",
-    "sdk:update:git": "node automation/check-updates.mjs",
+    "sdk:update:full": "node automation/check-updates.mjs",
+    "sdk:analyze": "node automation/analyze-only.mjs",
     "sdk:git:status": "git status --porcelain && git branch --show-current"
   },
   "keywords": [

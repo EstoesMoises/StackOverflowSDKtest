@@ -2836,60 +2836,6 @@ export class ObservableQuestionsMainApi {
     }
 
     /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<PaginatedQuestions>> {
-        const _config = mergeConfiguration(this.configuration, _options);
-
-        const requestContextPromise = this.requestFactory.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _config);
-        // build promise chain
-        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
-        for (const middleware of _config.middleware) {
-            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
-        }
-
-        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
-            pipe(mergeMap((response: ResponseContext) => {
-                let middlewarePostObservable = of(response);
-                for (const middleware of _config.middleware.reverse()) {
-                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
-                }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.questionsGetWithHttpInfo(rsp)));
-            }));
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<PaginatedQuestions> {
-        return this.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _options).pipe(map((apiResponse: HttpInfo<PaginatedQuestions>) => apiResponse.data));
-    }
-
-    /**
      * Creates a question.
      * Create a question
      * @param [questionRequestModel] 
@@ -3383,6 +3329,78 @@ export class ObservableQuestionsMainApi {
      */
     public questionsQuestionIdUpvotePost(questionId: number, _options?: ConfigurationOptions): Observable<QuestionResponseModel> {
         return this.questionsQuestionIdUpvotePostWithHttpInfo(questionId, _options).pipe(map((apiResponse: HttpInfo<QuestionResponseModel>) => apiResponse.data));
+    }
+
+}
+
+import { QuestionsMain2ApiRequestFactory, QuestionsMain2ApiResponseProcessor} from "../apis/QuestionsMain2Api";
+export class ObservableQuestionsMain2Api {
+    private requestFactory: QuestionsMain2ApiRequestFactory;
+    private responseProcessor: QuestionsMain2ApiResponseProcessor;
+    private configuration: Configuration;
+
+    public constructor(
+        configuration: Configuration,
+        requestFactory?: QuestionsMain2ApiRequestFactory,
+        responseProcessor?: QuestionsMain2ApiResponseProcessor
+    ) {
+        this.configuration = configuration;
+        this.requestFactory = requestFactory || new QuestionsMain2ApiRequestFactory(configuration);
+        this.responseProcessor = responseProcessor || new QuestionsMain2ApiResponseProcessor();
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<PaginatedQuestions>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.questionsGetWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<PaginatedQuestions> {
+        return this.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _options).pipe(map((apiResponse: HttpInfo<PaginatedQuestions>) => apiResponse.data));
     }
 
 }

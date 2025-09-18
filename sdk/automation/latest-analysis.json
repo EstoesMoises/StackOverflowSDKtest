@@ -1,0 +1,1423 @@
+{
+  "timestamp": "2025-09-18T23:07:31.041Z",
+  "gitChanges": {
+    "totalFiles": 16,
+    "filesByStatus": {
+      "modified": [
+        "sdk/automation-metadata.json",
+        "sdk/automation/check-updates.mjs",
+        "sdk/openapi.json",
+        "sdk/package.json",
+        "sdk/src/generated/.openapi-generator/FILES",
+        "sdk/src/generated/QuestionsMainApi.md",
+        "sdk/src/generated/apis/QuestionsMainApi.ts",
+        "sdk/src/generated/index.ts",
+        "sdk/src/generated/types/ObjectParamAPI.ts",
+        "sdk/src/generated/types/ObservableAPI.ts",
+        "sdk/src/generated/types/PromiseAPI.ts",
+        "sdk/src/source/swagger.json"
+      ],
+      "untracked": [
+        "sdk/automation/analyze-only.mjs",
+        "sdk/automation/change-analyzer.mjs",
+        "sdk/src/generated/QuestionsMain2Api.md",
+        "sdk/src/generated/apis/QuestionsMain2Api.ts"
+      ]
+    },
+    "generatedFiles": [
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/.openapi-generator/FILES",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/QuestionsMainApi.md",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/apis/QuestionsMainApi.ts",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/index.ts",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/types/ObjectParamAPI.ts",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/types/ObservableAPI.ts",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/generated/types/PromiseAPI.ts",
+        "rawStatus": "M"
+      },
+      {
+        "status": "untracked",
+        "path": "sdk/src/generated/QuestionsMain2Api.md",
+        "rawStatus": "??"
+      },
+      {
+        "status": "untracked",
+        "path": "sdk/src/generated/apis/QuestionsMain2Api.ts",
+        "rawStatus": "??"
+      }
+    ],
+    "clientFiles": [],
+    "otherFiles": [
+      {
+        "status": "modified",
+        "path": "sdk/automation-metadata.json",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/automation/check-updates.mjs",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/openapi.json",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/package.json",
+        "rawStatus": "M"
+      },
+      {
+        "status": "modified",
+        "path": "sdk/src/source/swagger.json",
+        "rawStatus": "M"
+      },
+      {
+        "status": "untracked",
+        "path": "sdk/automation/analyze-only.mjs",
+        "rawStatus": "??"
+      },
+      {
+        "status": "untracked",
+        "path": "sdk/automation/change-analyzer.mjs",
+        "rawStatus": "??"
+      }
+    ],
+    "diffSummary": {
+      "filesChanged": 7,
+      "changes": [
+        {
+          "status": "M",
+          "file": "sdk/src/generated/.openapi-generator/FILES"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/QuestionsMainApi.md"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/apis/QuestionsMainApi.ts"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/index.ts"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/types/ObjectParamAPI.ts"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/types/ObservableAPI.ts"
+        },
+        {
+          "status": "M",
+          "file": "sdk/src/generated/types/PromiseAPI.ts"
+        }
+      ]
+    }
+  },
+  "generatedCodeChanges": {
+    "apiFiles": [
+      "AnswersMainApi.ts",
+      "AnswersTeamsApi.ts",
+      "ArticlesMainApi.ts",
+      "ArticlesTeamsApi.ts",
+      "CollectionsMainApi.ts",
+      "CollectionsTeamsApi.ts",
+      "CommentsMainApi.ts",
+      "CommentsTeamsApi.ts",
+      "CommunitiesMainApi.ts",
+      "ImagesMainApi.ts",
+      "ImagesTeamsApi.ts",
+      "QuestionsMain2Api.ts",
+      "QuestionsMainApi.ts",
+      "QuestionsTeamsApi.ts",
+      "SearchMainApi.ts",
+      "SearchTeamsApi.ts",
+      "StackyMainApi.ts",
+      "TagsMainApi.ts",
+      "TagsTeamsApi.ts",
+      "UserGroupsMainApi.ts",
+      "UserGroupsTeamsApi.ts",
+      "UsersMainApi.ts",
+      "UsersTeamsApi.ts",
+      "baseapi.ts",
+      "exception.ts"
+    ],
+    "modelFiles": [
+      "AnswerRequestModel.ts",
+      "AnswerResponseModel.ts",
+      "AnswerSearchResultModel.ts",
+      "AnswerSummaryResponseModel.ts",
+      "AnswersSortParameter.ts",
+      "ArticlePermissionsRequestModel.ts",
+      "ArticlePermissionsResponseModel.ts",
+      "ArticlePermissionsType.ts",
+      "ArticleRequestModel.ts",
+      "ArticleResponseModel.ts",
+      "ArticleSearchResultModel.ts",
+      "ArticleSortParameter.ts",
+      "ArticleSummaryResponseModel.ts",
+      "ArticleType.ts",
+      "BountyResponseModel.ts",
+      "CollectionContentSummaryResponseModel.ts",
+      "CollectionContentType.ts",
+      "CollectionRequestModel.ts",
+      "CollectionsPermissionsFilter.ts",
+      "CollectionsResponseModel.ts",
+      "CollectionsSortParameter.ts",
+      "CollectionsSummaryResponseModel.ts",
+      "CommentResponseModel.ts",
+      "CommunityJoinModel.ts",
+      "CommunityLeaveModel.ts",
+      "CommunityMemberResponseModel.ts",
+      "CommunityResponseModel.ts",
+      "CommunitySortParameter.ts",
+      "CommunitySummaryResponseModel.ts",
+      "EditCollectionRequestModel.ts",
+      "FlagOptionResponseModel.ts",
+      "FlagRequestModel.ts",
+      "ImageResponseModel.ts",
+      "ImagesUploadPostRequest.ts",
+      "LinkedOrRelatedQuestionsSortParameter.ts",
+      "ManageUserResponseModel.ts",
+      "ManageUsersSortParameter.ts",
+      "MentionedUserGroupResponseModel.ts",
+      "MentionedUserResponseModel.ts",
+      "ObjectSerializer.ts",
+      "PaginatedAnswers.ts",
+      "PaginatedArticles.ts",
+      "PaginatedCollections.ts",
+      "PaginatedCommunities.ts",
+      "PaginatedLinkedOrRelatedQuestions.ts",
+      "PaginatedManageUsers.ts",
+      "PaginatedQuestions.ts",
+      "PaginatedSearchResults.ts",
+      "PaginatedSearchResultsItemsInner.ts",
+      "PaginatedTags.ts",
+      "PaginatedUserGroups.ts",
+      "PaginatedUsers.ts",
+      "ProblemDetails.ts",
+      "QuestionRequestModel.ts",
+      "QuestionResponseModel.ts",
+      "QuestionSearchResultModel.ts",
+      "QuestionSortParameter.ts",
+      "QuestionSummaryResponseModel.ts",
+      "SearchResultModel.ts",
+      "SearchSortParameter.ts",
+      "SortOrder.ts",
+      "SubjectMatterExpertRequestModel.ts",
+      "SubjectMatterExpertResponseModel.ts",
+      "TagResponseModel.ts",
+      "TagSummaryResponseModel.ts",
+      "TagWatchersResponseModel.ts",
+      "TagsSortParameter.ts",
+      "UserDetailsResponseModel.ts",
+      "UserGroupRequestModel.ts",
+      "UserGroupResponseModel.ts",
+      "UserGroupsSortParameter.ts",
+      "UserResponseModel.ts",
+      "UserSummaryResponseModel.ts",
+      "UsersSortParameter.ts",
+      "all.ts"
+    ],
+    "configFiles": [],
+    "newEndpoints": [
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdAcceptDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdAcceptPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDownvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDownvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdFlagsOptionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdFlagsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdAcceptDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdAcceptPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDownvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdDownvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdFlagsOptionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdFlagsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdAcceptDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdAcceptPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDownvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDownvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdFlagsOptionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdFlagsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdAcceptDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdAcceptPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDownvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdDownvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdFlagsOptionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdFlagsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdLinkedQuestionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesGet",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesPost",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdLinkedQuestionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdLinkedQuestionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdLinkedQuestionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsCollectionIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "collectionsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsCollectionIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamCollectionsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "articlesArticleIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdAnswersAnswerIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdCommentsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamArticlesArticleIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdAnswersAnswerIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdCommentsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdJoinBulkPost",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdJoinPost",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdLeaveBulkPost",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdLeavePost",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesGet",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdJoinBulkPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdJoinPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdLeaveBulkPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesCommunityIdLeavePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "communitiesGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "imagesImageIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "imagesUploadPost",
+        "type": "api-method"
+      },
+      {
+        "method": "imagesImageIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "imagesUploadPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamImagesImageIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamImagesUploadPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamImagesImageIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamImagesUploadPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdBookmarkDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdBookmarkPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDownvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDownvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdFlagsOptionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdFlagsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdLinkedGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdRelatedGet",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdBookmarkDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdBookmarkPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDownvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdDownvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdFlagsOptionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdFlagsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdLinkedGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdRelatedGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "questionsQuestionIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdBookmarkDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdBookmarkPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDownvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDownvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdFlagsOptionsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdFlagsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdLinkedGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdRelatedGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdUpvoteDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdUpvotePost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdBookmarkDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdBookmarkPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDownvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdDownvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdFlagsOptionsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdFlagsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdLinkedGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdRelatedGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdUpvoteDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamQuestionsQuestionIdUpvotePostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "searchGet",
+        "type": "api-method"
+      },
+      {
+        "method": "searchGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamSearchGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamSearchGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "stackyGet",
+        "type": "api-method"
+      },
+      {
+        "method": "stackyGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsPut",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUserGroupsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUserGroupsUserGroupIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUsersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUsersUserIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdTagWatchersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUserGroupsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUserGroupsUserGroupIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUsersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdSubjectMatterExpertsUsersUserIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "tagsTagIdTagWatchersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUserGroupsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUserGroupsUserGroupIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUsersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUsersUserIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdTagWatchersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUserGroupsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUserGroupsUserGroupIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUsersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdSubjectMatterExpertsUsersUserIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamTagsTagIdTagWatchersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdMembersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdMembersUserIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdMembersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdMembersUserIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "userGroupsUserGroupIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdMembersPost",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdMembersUserIdDelete",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdPut",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdMembersPostWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdMembersUserIdDeleteWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUserGroupsUserGroupIdPutWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersByEmailEmailGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersByExternalIdExternalIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersManageGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersMeGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersUserIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersUserIdWatchedTagsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "usersByEmailEmailGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersByExternalIdExternalIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersManageGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersMeGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersUserIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "usersUserIdWatchedTagsGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersByEmailEmailGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersByExternalIdExternalIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersMeGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersUserIdGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersUserIdWatchedTagsGet",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersByEmailEmailGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersByExternalIdExternalIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersMeGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersUserIdGetWithHttpInfo",
+        "type": "api-method"
+      },
+      {
+        "method": "teamsTeamUsersUserIdWatchedTagsGetWithHttpInfo",
+        "type": "api-method"
+      }
+    ],
+    "removedEndpoints": [],
+    "modifiedEndpoints": []
+  },
+  "wrapperImpact": {
+    "affectedClients": [],
+    "totalClients": 11,
+    "riskLevel": "LOW"
+  },
+  "riskAssessment": {
+    "level": "MEDIUM",
+    "score": 4,
+    "factors": {
+      "totalFiles": 16,
+      "affectedClients": 0,
+      "generatedChanges": 25
+    }
+  }
+}
