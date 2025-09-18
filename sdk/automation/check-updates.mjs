@@ -3,6 +3,7 @@
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import { execSync } from 'child_process';
+import { GitIntegration } from './git-integration.mjs';
 
 class BasicSDKUpdater {
   constructor() {
@@ -12,6 +13,11 @@ class BasicSDKUpdater {
       localJsonPath: './openapi.json',
       metadataFile: './automation-metadata.json'
     };
+    
+    this.git = new GitIntegration({
+      branchPrefix: 'sdk-auto-update',
+      defaultBranch: 'main' // Change to 'master' if that's your default
+    });
   }
 
   async run() {
@@ -27,6 +33,30 @@ class BasicSDKUpdater {
 
       console.log('📝 Changes detected! Generating new code...');
       await this.generateCode();
+      
+      console.log('🔧 Handling Git workflow...');
+      const gitResult = await this.git.handleChanges({
+        specUpdated: true,
+        timestamp: new Date().toISOString()
+      });
+      
+      if (gitResult) {
+        console.log(`✅ Created branch: ${gitResult.branchName}`);
+        console.log(`📁 Changed files: ${gitResult.changedFiles}`);
+        
+        if (gitResult.remoteUrl) {
+          console.log('🔗 Branch pushed to remote successfully');
+        }
+        
+        // Optionally switch back to main branch
+        // this.git.switchToDefault();
+        
+        return {
+          updated: true,
+          branchName: gitResult.branchName,
+          changedFiles: gitResult.changedFiles
+        };
+      }
       
       console.log('✅ Update completed successfully');
       return true;

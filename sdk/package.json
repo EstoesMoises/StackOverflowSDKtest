@@ -23,7 +23,9 @@
     "test": "npx tsx ./test.ts",
     "sdk:check": "node automation/check-updates.mjs",
     "sdk:check:info": "node automation/check-updates.mjs --info",
-    "sdk:update": "node automation/check-updates.mjs && pnpm build"
+    "sdk:update": "node automation/check-updates.mjs && pnpm build",
+    "sdk:update:git": "node automation/check-updates.mjs",
+    "sdk:git:status": "git status --porcelain && git branch --show-current"
   },
   "keywords": [
     "stackoverflow",
