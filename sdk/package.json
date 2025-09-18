@@ -20,7 +20,10 @@
     "compile": "tsc",
     "clean": "rm -rf dist/",
     "prepublishOnly": "pnpm clean && pnpm build",
-    "test": "npx tsx ./test.ts"
+    "test": "npx tsx ./test.ts",
+    "sdk:check": "node automation/check-updates.mjs",
+    "sdk:check:info": "node automation/check-updates.mjs --info",
+    "sdk:update": "node automation/check-updates.mjs && pnpm build"
   },
   "keywords": [
     "stackoverflow",

@@ -1,0 +1,8 @@
+{
+  "lastHash": "e9b74df5b2608c1bc205a6349d83137e44d8b13076bd6c79c0f40dd99064ff04",
+  "previousHash": null,
+  "lastUpdate": "2025-09-18T17:29:27.110Z",
+  "lastCheck": "2025-09-18T17:33:40.059Z",
+  "sourceFile": "/Users/moisesperezgarcia/Documents/programming/sdkautomation/sdk/src/source/swagger.json",
+  "lastError": "ENOENT: no such file or directory, open '/src/source/swagger.json'"
+}
