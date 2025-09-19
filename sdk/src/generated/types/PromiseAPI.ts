@@ -68,6 +68,7 @@ import { TagResponseModel } from '../models/TagResponseModel';
 import { TagSummaryResponseModel } from '../models/TagSummaryResponseModel';
 import { TagWatchersResponseModel } from '../models/TagWatchersResponseModel';
 import { TagsSortParameter } from '../models/TagsSortParameter';
+import { UserAnalyticsResponseModel } from '../models/UserAnalyticsResponseModel';
 import { UserDetailsResponseModel } from '../models/UserDetailsResponseModel';
 import { UserGroupRequestModel } from '../models/UserGroupRequestModel';
 import { UserGroupResponseModel } from '../models/UserGroupResponseModel';
@@ -2027,6 +2028,48 @@ export class PromiseQuestionsMainApi {
     }
 
     /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<PaginatedQuestions> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
      * Creates a question.
      * Create a question
      * @param [questionRequestModel] 
@@ -2351,67 +2394,6 @@ export class PromiseQuestionsMainApi {
     public questionsQuestionIdUpvotePost(questionId: number, _options?: PromiseConfigurationOptions): Promise<QuestionResponseModel> {
         const observableOptions = wrapOptions(_options);
         const result = this.api.questionsQuestionIdUpvotePost(questionId, observableOptions);
-        return result.toPromise();
-    }
-
-
-}
-
-
-
-import { ObservableQuestionsMain21231213Api } from './ObservableAPI';
-
-import { QuestionsMain21231213ApiRequestFactory, QuestionsMain21231213ApiResponseProcessor} from "../apis/QuestionsMain21231213Api";
-export class PromiseQuestionsMain21231213Api {
-    private api: ObservableQuestionsMain21231213Api
-
-    public constructor(
-        configuration: Configuration,
-        requestFactory?: QuestionsMain21231213ApiRequestFactory,
-        responseProcessor?: QuestionsMain21231213ApiResponseProcessor
-    ) {
-        this.api = new ObservableQuestionsMain21231213Api(configuration, requestFactory, responseProcessor);
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
-        const observableOptions = wrapOptions(_options);
-        const result = this.api.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
-        return result.toPromise();
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: PromiseConfigurationOptions): Promise<PaginatedQuestions> {
-        const observableOptions = wrapOptions(_options);
-        const result = this.api.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, observableOptions);
         return result.toPromise();
     }
 
@@ -3937,6 +3919,32 @@ export class PromiseUsersMainApi {
     }
 
     /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public usersUserIdAnalyticsGetWithHttpInfo(userId: number, dateFrom?: Date, dateTo?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<UserAnalyticsResponseModel>> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.usersUserIdAnalyticsGetWithHttpInfo(userId, dateFrom, dateTo, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public usersUserIdAnalyticsGet(userId: number, dateFrom?: Date, dateTo?: Date, _options?: PromiseConfigurationOptions): Promise<UserAnalyticsResponseModel> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.usersUserIdAnalyticsGet(userId, dateFrom, dateTo, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
      * Retrieves details for a user, identified by user ID.
      * Retrieve a user
      * @param userId User ID
@@ -4092,6 +4100,34 @@ export class PromiseUsersTeamsApi {
     public teamsTeamUsersMeGet(team: string, _options?: PromiseConfigurationOptions): Promise<UserDetailsResponseModel> {
         const observableOptions = wrapOptions(_options);
         const result = this.api.teamsTeamUsersMeGet(team, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param team
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(userId: number, team: string, dateFrom?: Date, dateTo?: Date, _options?: PromiseConfigurationOptions): Promise<HttpInfo<UserAnalyticsResponseModel>> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(userId, team, dateFrom, dateTo, observableOptions);
+        return result.toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param team
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public teamsTeamUsersUserIdAnalyticsGet(userId: number, team: string, dateFrom?: Date, dateTo?: Date, _options?: PromiseConfigurationOptions): Promise<UserAnalyticsResponseModel> {
+        const observableOptions = wrapOptions(_options);
+        const result = this.api.teamsTeamUsersUserIdAnalyticsGet(userId, team, dateFrom, dateTo, observableOptions);
         return result.toPromise();
     }
 

@@ -69,6 +69,7 @@ import { TagResponseModel } from '../models/TagResponseModel';
 import { TagSummaryResponseModel } from '../models/TagSummaryResponseModel';
 import { TagWatchersResponseModel } from '../models/TagWatchersResponseModel';
 import { TagsSortParameter } from '../models/TagsSortParameter';
+import { UserAnalyticsResponseModel } from '../models/UserAnalyticsResponseModel';
 import { UserDetailsResponseModel } from '../models/UserDetailsResponseModel';
 import { UserGroupRequestModel } from '../models/UserGroupRequestModel';
 import { UserGroupResponseModel } from '../models/UserGroupResponseModel';
@@ -2836,6 +2837,60 @@ export class ObservableQuestionsMainApi {
     }
 
     /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<PaginatedQuestions>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.questionsGetWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param [page]
+     * @param [pageSize]
+     * @param [sort]
+     * @param [order]
+     * @param [isAnswered]
+     * @param [hasAcceptedAnswer]
+     * @param [questionId]
+     * @param [tagId]
+     * @param [authorId]
+     * @param [_from]
+     * @param [to]
+     */
+    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<PaginatedQuestions> {
+        return this.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _options).pipe(map((apiResponse: HttpInfo<PaginatedQuestions>) => apiResponse.data));
+    }
+
+    /**
      * Creates a question.
      * Create a question
      * @param [questionRequestModel] 
@@ -3329,78 +3384,6 @@ export class ObservableQuestionsMainApi {
      */
     public questionsQuestionIdUpvotePost(questionId: number, _options?: ConfigurationOptions): Observable<QuestionResponseModel> {
         return this.questionsQuestionIdUpvotePostWithHttpInfo(questionId, _options).pipe(map((apiResponse: HttpInfo<QuestionResponseModel>) => apiResponse.data));
-    }
-
-}
-
-import { QuestionsMain21231213ApiRequestFactory, QuestionsMain21231213ApiResponseProcessor} from "../apis/QuestionsMain21231213Api";
-export class ObservableQuestionsMain21231213Api {
-    private requestFactory: QuestionsMain21231213ApiRequestFactory;
-    private responseProcessor: QuestionsMain21231213ApiResponseProcessor;
-    private configuration: Configuration;
-
-    public constructor(
-        configuration: Configuration,
-        requestFactory?: QuestionsMain21231213ApiRequestFactory,
-        responseProcessor?: QuestionsMain21231213ApiResponseProcessor
-    ) {
-        this.configuration = configuration;
-        this.requestFactory = requestFactory || new QuestionsMain21231213ApiRequestFactory(configuration);
-        this.responseProcessor = responseProcessor || new QuestionsMain21231213ApiResponseProcessor();
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGetWithHttpInfo(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<PaginatedQuestions>> {
-        const _config = mergeConfiguration(this.configuration, _options);
-
-        const requestContextPromise = this.requestFactory.questionsGet(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _config);
-        // build promise chain
-        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
-        for (const middleware of _config.middleware) {
-            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
-        }
-
-        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
-            pipe(mergeMap((response: ResponseContext) => {
-                let middlewarePostObservable = of(response);
-                for (const middleware of _config.middleware.reverse()) {
-                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
-                }
-                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.questionsGetWithHttpInfo(rsp)));
-            }));
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param [page]
-     * @param [pageSize]
-     * @param [sort]
-     * @param [order]
-     * @param [isAnswered]
-     * @param [hasAcceptedAnswer]
-     * @param [questionId]
-     * @param [tagId]
-     * @param [authorId]
-     * @param [_from]
-     * @param [to]
-     */
-    public questionsGet(page?: number, pageSize?: 15 | 30 | 50 | 100, sort?: QuestionSortParameter, order?: SortOrder, isAnswered?: boolean, hasAcceptedAnswer?: boolean, questionId?: Array<number>, tagId?: Array<number>, authorId?: number, _from?: Date, to?: Date, _options?: ConfigurationOptions): Observable<PaginatedQuestions> {
-        return this.questionsGetWithHttpInfo(page, pageSize, sort, order, isAnswered, hasAcceptedAnswer, questionId, tagId, authorId, _from, to, _options).pipe(map((apiResponse: HttpInfo<PaginatedQuestions>) => apiResponse.data));
     }
 
 }
@@ -5552,6 +5535,44 @@ export class ObservableUsersMainApi {
     }
 
     /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public usersUserIdAnalyticsGetWithHttpInfo(userId: number, dateFrom?: Date, dateTo?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<UserAnalyticsResponseModel>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.usersUserIdAnalyticsGet(userId, dateFrom, dateTo, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.usersUserIdAnalyticsGetWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public usersUserIdAnalyticsGet(userId: number, dateFrom?: Date, dateTo?: Date, _options?: ConfigurationOptions): Observable<UserAnalyticsResponseModel> {
+        return this.usersUserIdAnalyticsGetWithHttpInfo(userId, dateFrom, dateTo, _options).pipe(map((apiResponse: HttpInfo<UserAnalyticsResponseModel>) => apiResponse.data));
+    }
+
+    /**
      * Retrieves details for a user, identified by user ID.
      * Retrieve a user
      * @param userId User ID
@@ -5779,6 +5800,46 @@ export class ObservableUsersTeamsApi {
      */
     public teamsTeamUsersMeGet(team: string, _options?: ConfigurationOptions): Observable<UserDetailsResponseModel> {
         return this.teamsTeamUsersMeGetWithHttpInfo(team, _options).pipe(map((apiResponse: HttpInfo<UserDetailsResponseModel>) => apiResponse.data));
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param team
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(userId: number, team: string, dateFrom?: Date, dateTo?: Date, _options?: ConfigurationOptions): Observable<HttpInfo<UserAnalyticsResponseModel>> {
+        const _config = mergeConfiguration(this.configuration, _options);
+
+        const requestContextPromise = this.requestFactory.teamsTeamUsersUserIdAnalyticsGet(userId, team, dateFrom, dateTo, _config);
+        // build promise chain
+        let middlewarePreObservable = from<RequestContext>(requestContextPromise);
+        for (const middleware of _config.middleware) {
+            middlewarePreObservable = middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => middleware.pre(ctx)));
+        }
+
+        return middlewarePreObservable.pipe(mergeMap((ctx: RequestContext) => _config.httpApi.send(ctx))).
+            pipe(mergeMap((response: ResponseContext) => {
+                let middlewarePostObservable = of(response);
+                for (const middleware of _config.middleware.reverse()) {
+                    middlewarePostObservable = middlewarePostObservable.pipe(mergeMap((rsp: ResponseContext) => middleware.post(rsp)));
+                }
+                return middlewarePostObservable.pipe(map((rsp: ResponseContext) => this.responseProcessor.teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(rsp)));
+            }));
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param team
+     * @param [dateFrom] Start date for analytics period
+     * @param [dateTo] End date for analytics period
+     */
+    public teamsTeamUsersUserIdAnalyticsGet(userId: number, team: string, dateFrom?: Date, dateTo?: Date, _options?: ConfigurationOptions): Observable<UserAnalyticsResponseModel> {
+        return this.teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(userId, team, dateFrom, dateTo, _options).pipe(map((apiResponse: HttpInfo<UserAnalyticsResponseModel>) => apiResponse.data));
     }
 
     /**
