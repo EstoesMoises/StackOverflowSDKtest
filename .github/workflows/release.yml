@@ -5,6 +5,7 @@ on:
     paths:
       - "sdk/**"
       - ".changeset/**"
+      - "!sdk/automation/**"
   workflow_dispatch:
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
