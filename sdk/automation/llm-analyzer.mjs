@@ -13,12 +13,13 @@ export class LLMAnalyzer {
    * Analyze changes and their impact on wrapper code
    */
   async analyzeChanges(diffData, wrapperContext, generationSummary) {
+    let response;
     try {
       console.log('🤖 Analyzing changes with LLM...');
       
       const prompt = this.buildAnalysisPrompt(diffData, wrapperContext, generationSummary);
       
-      const response = await this.client.chat.completions.create({
+      response = await this.client.chat.completions.create({
         model: config.openai.model,
         messages: [
           {
