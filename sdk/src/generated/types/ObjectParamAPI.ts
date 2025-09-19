@@ -3460,96 +3460,96 @@ export class ObjectQuestionsMainApi {
 
 }
 
-import { ObservableQuestionsMain21231Api } from "./ObservableAPI";
-import { QuestionsMain21231ApiRequestFactory, QuestionsMain21231ApiResponseProcessor} from "../apis/QuestionsMain21231Api";
+import { ObservableQuestionsMain21231213Api } from "./ObservableAPI";
+import { QuestionsMain21231213ApiRequestFactory, QuestionsMain21231213ApiResponseProcessor} from "../apis/QuestionsMain21231213Api";
 
-export interface QuestionsMain21231ApiQuestionsGetRequest {
+export interface QuestionsMain21231213ApiQuestionsGetRequest {
     /**
      * 
      * Minimum: 1
      * Maximum: 2147483647
      * Defaults to: undefined
      * @type number
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     page?: number
     /**
      * 
      * Defaults to: undefined
      * @type 15 | 30 | 50 | 100
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     pageSize?: 15 | 30 | 50 | 100
     /**
      * 
      * Defaults to: undefined
      * @type QuestionSortParameter
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     sort?: QuestionSortParameter
     /**
      * 
      * Defaults to: undefined
      * @type SortOrder
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     order?: SortOrder
     /**
      * 
      * Defaults to: undefined
      * @type boolean
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     isAnswered?: boolean
     /**
      * 
      * Defaults to: undefined
      * @type boolean
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     hasAcceptedAnswer?: boolean
     /**
      * 
      * Defaults to: undefined
      * @type Array&lt;number&gt;
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     questionId?: Array<number>
     /**
      * 
      * Defaults to: undefined
      * @type Array&lt;number&gt;
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     tagId?: Array<number>
     /**
      * 
      * Defaults to: undefined
      * @type number
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     authorId?: number
     /**
      * 
      * Defaults to: undefined
      * @type Date
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     _from?: Date
     /**
      * 
      * Defaults to: undefined
      * @type Date
-     * @memberof QuestionsMain21231ApiquestionsGet
+     * @memberof QuestionsMain21231213ApiquestionsGet
      */
     to?: Date
 }
 
-export class ObjectQuestionsMain21231Api {
-    private api: ObservableQuestionsMain21231Api
+export class ObjectQuestionsMain21231213Api {
+    private api: ObservableQuestionsMain21231213Api
 
-    public constructor(configuration: Configuration, requestFactory?: QuestionsMain21231ApiRequestFactory, responseProcessor?: QuestionsMain21231ApiResponseProcessor) {
-        this.api = new ObservableQuestionsMain21231Api(configuration, requestFactory, responseProcessor);
+    public constructor(configuration: Configuration, requestFactory?: QuestionsMain21231213ApiRequestFactory, responseProcessor?: QuestionsMain21231213ApiResponseProcessor) {
+        this.api = new ObservableQuestionsMain21231213Api(configuration, requestFactory, responseProcessor);
     }
 
     /**
@@ -3557,7 +3557,7 @@ export class ObjectQuestionsMain21231Api {
      * Retrieve all questions
      * @param param the request object
      */
-    public questionsGetWithHttpInfo(param: QuestionsMain21231ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
+    public questionsGetWithHttpInfo(param: QuestionsMain21231213ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
         return this.api.questionsGetWithHttpInfo(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 
@@ -3566,7 +3566,7 @@ export class ObjectQuestionsMain21231Api {
      * Retrieve all questions
      * @param param the request object
      */
-    public questionsGet(param: QuestionsMain21231ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
+    public questionsGet(param: QuestionsMain21231213ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
         return this.api.questionsGet(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 

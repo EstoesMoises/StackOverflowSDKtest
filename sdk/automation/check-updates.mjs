@@ -34,85 +34,87 @@ class BasicSDKUpdater {
     });
   }
 
-  async run() {
-    console.log('🔍 Checking for OpenAPI spec updates...');
+async run() {
+  console.log('🔍 Checking for OpenAPI spec updates...');
+  
+  try {
+    const hasChanges = await this.checkForChanges();
     
-    try {
-      const hasChanges = await this.checkForChanges();
-      
-      if (!hasChanges) {
-        console.log('✅ No changes detected');
-        return false;
-      }
-
-      console.log('📝 Changes detected! Generating new code...');
-      await this.generateCode();
-      
-      console.log('📊 Analyzing changes...');
-      const analysis = await this.analyzer.analyzeChanges();
-      
-      console.log('🔧 Handling Git workflow...');
-      const gitResult = await this.git.handleChanges({
-        specUpdated: true,
-        timestamp: new Date().toISOString(),
-        analysis: analysis
-      });
-      
-      if (gitResult) {
-        console.log(`✅ Created branch: ${gitResult.branchName}`);
-        console.log(`📁 Changed files: ${gitResult.changedFiles}`);
-        console.log(`⚠️  Risk level: ${analysis.riskAssessment?.level || 'UNKNOWN'}`);
-        
-        if (analysis.wrapperImpact?.affectedClients?.length > 0) {
-          console.log(`🔧 Affected wrapper clients: ${analysis.wrapperImpact.affectedClients.length}`);
-        }
-        
-        if (gitResult.remoteUrl) {
-          console.log('🔗 Branch pushed to remote successfully');
-        }
-        
-        // Create Pull Request if enabled
-        if (this.config.createPR) {
-          console.log('📝 Creating pull request...');
-          const prResult = await this.pr.createPullRequest(gitResult.branchName, analysis);
-          
-          if (prResult.success) {
-            console.log(`✅ Pull request created: ${prResult.url}`);
-          } else {
-            console.log('⚠️  PR creation instructions provided above');
-          }
-        } else {
-          console.log('ℹ️  PR creation disabled. Set CREATE_PR=true to enable.');
-        }
-        
-        // Generate and display summary
-        const summary = this.analyzer.generateSummary(analysis);
-        console.log('\n' + '='.repeat(50));
-        console.log(summary);
-        console.log('='.repeat(50) + '\n');
-        
-        // Optionally switch back to main branch
-        // this.git.switchToDefault();
-        
-        return {
-          updated: true,
-          branchName: gitResult.branchName,
-          changedFiles: gitResult.changedFiles,
-          analysis: analysis,
-          riskLevel: analysis.riskAssessment?.level,
-          prResult: this.config.createPR ? prResult : null
-        };
-      }
-      
-      console.log('✅ Update completed successfully');
-      return true;
-      
-    } catch (error) {
-      console.error('❌ Update failed:', error.message);
-      throw error;
+    if (!hasChanges) {
+      console.log('✅ No changes detected');
+      return false;
     }
-  }
 
+    console.log('📝 Changes detected! Generating new code...');
+    await this.generateCode();
+    
+    console.log('📊 Analyzing changes...');
+    const analysis = await this.analyzer.analyzeChanges();
+    
+    console.log('🔧 Handling Git workflow...');
+    const gitResult = await this.git.handleChanges({
+      specUpdated: true,
+      timestamp: new Date().toISOString(),
+      analysis: analysis
+    });
+    
+    if (gitResult) {
+      console.log(`✅ Created branch: ${gitResult.branchName}`);
+      console.log(`📁 Changed files: ${gitResult.changedFiles}`);
+      console.log(`⚠️  Risk level: ${analysis.riskAssessment?.level || 'UNKNOWN'}`);
+      
+      if (analysis.wrapperImpact?.affectedClients?.length > 0) {
+        console.log(`🔧 Affected wrapper clients: ${analysis.wrapperImpact.affectedClients.length}`);
+      }
+      
+      if (gitResult.remoteUrl) {
+        console.log('🔗 Branch pushed to remote successfully');
+      }
+      
+      // Initialize prResult outside the conditional block
+      let prResult = null;
+      
+      // Create Pull Request if enabled
+      if (this.config.createPR) {
+        console.log('📝 Creating pull request...');
+        prResult = await this.pr.createPullRequest(gitResult.branchName, analysis);
+        
+        if (prResult.success) {
+          console.log(`✅ Pull request created: ${prResult.url}`);
+        } else {
+          console.log('⚠️  PR creation instructions provided above');
+        }
+      } else {
+        console.log('ℹ️  PR creation disabled. Set CREATE_PR=true to enable.');
+      }
+      
+      // Generate and display summary
+      const summary = this.analyzer.generateSummary(analysis);
+      console.log('\n' + '='.repeat(50));
+      console.log(summary);
+      console.log('='.repeat(50) + '\n');
+      
+      // Optionally switch back to main branch
+      // this.git.switchToDefault();
+      
+      return {
+        updated: true,
+        branchName: gitResult.branchName,
+        changedFiles: gitResult.changedFiles,
+        analysis: analysis,
+        riskLevel: analysis.riskAssessment?.level,
+        prResult: prResult // Now this will always be defined (either the actual result or null)
+      };
+    }
+    
+    console.log('✅ Update completed successfully');
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Update failed:', error.message);
+    throw error;
+  }
+}
   /**
    * Check if the OpenAPI spec has changed by comparing hashes
    */

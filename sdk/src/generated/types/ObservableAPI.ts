@@ -3333,20 +3333,20 @@ export class ObservableQuestionsMainApi {
 
 }
 
-import { QuestionsMain21231ApiRequestFactory, QuestionsMain21231ApiResponseProcessor} from "../apis/QuestionsMain21231Api";
-export class ObservableQuestionsMain21231Api {
-    private requestFactory: QuestionsMain21231ApiRequestFactory;
-    private responseProcessor: QuestionsMain21231ApiResponseProcessor;
+import { QuestionsMain21231213ApiRequestFactory, QuestionsMain21231213ApiResponseProcessor} from "../apis/QuestionsMain21231213Api";
+export class ObservableQuestionsMain21231213Api {
+    private requestFactory: QuestionsMain21231213ApiRequestFactory;
+    private responseProcessor: QuestionsMain21231213ApiResponseProcessor;
     private configuration: Configuration;
 
     public constructor(
         configuration: Configuration,
-        requestFactory?: QuestionsMain21231ApiRequestFactory,
-        responseProcessor?: QuestionsMain21231ApiResponseProcessor
+        requestFactory?: QuestionsMain21231213ApiRequestFactory,
+        responseProcessor?: QuestionsMain21231213ApiResponseProcessor
     ) {
         this.configuration = configuration;
-        this.requestFactory = requestFactory || new QuestionsMain21231ApiRequestFactory(configuration);
-        this.responseProcessor = responseProcessor || new QuestionsMain21231ApiResponseProcessor();
+        this.requestFactory = requestFactory || new QuestionsMain21231213ApiRequestFactory(configuration);
+        this.responseProcessor = responseProcessor || new QuestionsMain21231213ApiResponseProcessor();
     }
 
     /**
