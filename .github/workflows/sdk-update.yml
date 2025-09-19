@@ -96,7 +96,7 @@ jobs:
           chmod +x ./sdk/automation/sdk-updater.mjs
           
           # Run the automation
-          node automation/sdk-updater.mjs
+          node ./sdk/automation/sdk-updater.mjs
       
       - name: 📊 Upload automation logs
         if: always()
