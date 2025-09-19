@@ -93,7 +93,7 @@ jobs:
           echo "Force run: $FORCE_RUN"
           
           # Make the automation scripts executable
-          chmod +x automation/sdk-updater.mjs
+          chmod +x ./sdk/automation/sdk-updater.mjs
           
           # Run the automation
           node automation/sdk-updater.mjs
