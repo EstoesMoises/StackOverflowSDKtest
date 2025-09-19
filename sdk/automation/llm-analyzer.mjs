@@ -43,7 +43,7 @@ export class LLMAnalyzer {
   }
   
   /**
-   * System prompt - let LLM handle all formatting
+   * System prompt
    */
   getSystemPrompt() {
     return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis.
@@ -93,7 +93,7 @@ ${this.limitDiff(diffData.rawDiff, 3000)}
 Please analyze these changes and respond with JSON in this structure:
 
 {
-  "summary": "What changed in the SDK",
+  "summary": "What changed in the SDK. Be specific.",
   "prDescription": "Complete GitHub PR description with proper markdown formatting, emojis, headers, and checkboxes. Make it ready to paste into GitHub.",
   "riskAssessment": {
     "level": "LOW|MEDIUM|HIGH|BREAKING",
