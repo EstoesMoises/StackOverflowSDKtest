@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**teamsTeamUsersByExternalIdExternalIdGet**](UsersTeamsApi.md#teamsTeamUsersByExternalIdExternalIdGet) | **GET** /teams/{team}/users/by-external-id/{externalId} | Retrieve a user by external ID
 [**teamsTeamUsersGet**](UsersTeamsApi.md#teamsTeamUsersGet) | **GET** /teams/{team}/users | Retrieve all users
 [**teamsTeamUsersMeGet**](UsersTeamsApi.md#teamsTeamUsersMeGet) | **GET** /teams/{team}/users/me | Retrieve logged-in user details
+[**teamsTeamUsersUserIdAnalyticsGet**](UsersTeamsApi.md#teamsTeamUsersUserIdAnalyticsGet) | **GET** /teams/{team}/users/{userId}/analytics | Retrieve user analytics
 [**teamsTeamUsersUserIdGet**](UsersTeamsApi.md#teamsTeamUsersUserIdGet) | **GET** /teams/{team}/users/{userId} | Retrieve a user
 [**teamsTeamUsersUserIdWatchedTagsGet**](UsersTeamsApi.md#teamsTeamUsersUserIdWatchedTagsGet) | **GET** /teams/{team}/users/{userId}/watched-tags | Retrieves a list of tags watched by user
 
@@ -248,6 +249,72 @@ Name | Type | Description  | Notes
 |-------------|-------------|------------------|
 **200** | User details found |  -  |
 **404** | User details not found |  -  |
+**400** | Invalid request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **teamsTeamUsersUserIdAnalyticsGet**
+> UserAnalyticsResponseModel teamsTeamUsersUserIdAnalyticsGet()
+
+Retrieves analytics data for a user, including activity metrics and engagement statistics.
+
+### Example
+
+
+```typescript
+import { createConfiguration, UsersTeamsApi } from '';
+import type { UsersTeamsApiTeamsTeamUsersUserIdAnalyticsGetRequest } from '';
+
+const configuration = createConfiguration();
+const apiInstance = new UsersTeamsApi(configuration);
+
+const request: UsersTeamsApiTeamsTeamUsersUserIdAnalyticsGetRequest = {
+    // User ID
+  userId: 123,
+  
+  team: "team_example",
+    // Start date for analytics period (optional)
+  dateFrom: new Date('2024-01-01T00:00:00Z'),
+    // End date for analytics period (optional)
+  dateTo: new Date('2024-12-31T23:59:59Z'),
+};
+
+const data = await apiInstance.teamsTeamUsersUserIdAnalyticsGet(request);
+console.log('API called successfully. Returned data:', data);
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userId** | [**number**] | User ID | defaults to undefined
+ **team** | [**string**] |  | defaults to undefined
+ **dateFrom** | [**Date**] | Start date for analytics period | (optional) defaults to undefined
+ **dateTo** | [**Date**] | End date for analytics period | (optional) defaults to undefined
+
+
+### Return type
+
+**UserAnalyticsResponseModel**
+
+### Authorization
+
+[oauth2](README.md#oauth2)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, text/plain
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | User analytics found |  -  |
+**404** | User not found |  -  |
 **400** | Invalid request |  -  |
 **401** | Unauthorized |  -  |
 **403** | Forbidden |  -  |
