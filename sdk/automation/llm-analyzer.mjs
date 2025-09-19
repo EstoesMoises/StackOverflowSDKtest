@@ -34,13 +34,35 @@ export class LLMAnalyzer {
         max_tokens: config.openai.maxTokens
       });
       
-      const analysis = JSON.parse(response.choices[0].message.content);
+      // Add better error handling and response cleaning
+      const rawContent = response.choices[0].message.content.trim();
+      console.log('🔍 Raw LLM response:', rawContent);
+      
+      // Clean the response if it contains markdown
+      const cleanContent = this.cleanJsonResponse(rawContent);
+      
+      const analysis = JSON.parse(cleanContent);
       return this.enhanceAnalysis(analysis, diffData, generationSummary);
       
     } catch (error) {
       console.warn('LLM analysis failed:', error.message);
+      console.warn('Response content:', response?.choices?.[0]?.message?.content);
       return this.createFallbackAnalysis(diffData, generationSummary);
     }
+  }
+  
+  /**
+   * Clean JSON response by removing markdown formatting if present
+   */
+  cleanJsonResponse(content) {
+    // Remove markdown code blocks if present
+    const jsonBlockMatch = content.match(/```json\s*\n?([\s\S]*?)\n?```/);
+    if (jsonBlockMatch) {
+      return jsonBlockMatch[1].trim();
+    }
+    
+    // Remove any leading/trailing markdown backticks
+    return content.replace(/^`+|`+$/g, '').trim();
   }
   
   /**
@@ -59,7 +81,7 @@ Key responsibilities:
 5. Assess the risk level of changes
 6. Provide actionable testing guidance
 
-Always respond with valid JSON in the exact format requested. Be specific and actionable in your recommendations.`;
+IMPORTANT: Always respond with ONLY valid JSON. Do not use markdown formatting, code blocks, or any other text. Return pure JSON only.`;
   }
   
   /**
@@ -88,15 +110,12 @@ ${diffHighlights}
 ${wrapperSummary}
 
 ### Sample of Raw Diff (truncated)
-\`\`\`
 ${this.truncateDiff(diffData.rawDiff)}
-\`\`\`
 
 ## Required Analysis
 
-Please analyze these changes and provide a JSON response with this exact structure:
+Please analyze these changes and provide a JSON response with this exact structure (return ONLY the JSON, no markdown formatting):
 
-\`\`\`json
 {
   "summary": "Brief description of what changed in the generated SDK",
   "riskAssessment": {
@@ -123,14 +142,13 @@ Please analyze these changes and provide a JSON response with this exact structu
     "Regression tests to run"
   ],
   "automatedChanges": {
-    "canAutomate": true/false,
+    "canAutomate": true,
     "suggestedUpdates": {
       "filename.ts": "complete updated file content if changes are simple and safe"
     },
     "reasoning": "Why these changes can/cannot be automated"
   }
 }
-\`\`\`
 
 Focus on:
 - Breaking changes that prevent compilation
@@ -138,7 +156,8 @@ Focus on:
 - Modified response types or parameter requirements
 - Import statement changes
 - Opportunity to automate simple, safe updates
-`;
+
+Remember: Return ONLY valid JSON, no additional text or formatting.`;
   }
   
   /**
