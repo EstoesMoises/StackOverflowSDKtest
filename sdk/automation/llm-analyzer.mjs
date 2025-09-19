@@ -13,13 +13,10 @@ export class LLMAnalyzer {
    * Analyze changes and their impact on wrapper code
    */
   async analyzeChanges(diffData, wrapperContext, generationSummary) {
-    let response;
     try {
       console.log('🤖 Analyzing changes with LLM...');
       
-      const prompt = this.buildAnalysisPrompt(diffData, wrapperContext, generationSummary);
-      
-      response = await this.client.chat.completions.create({
+      const response = await this.client.chat.completions.create({
         model: config.openai.model,
         messages: [
           {
@@ -28,277 +25,149 @@ export class LLMAnalyzer {
           },
           {
             role: "user", 
-            content: prompt
+            content: this.buildAnalysisPrompt(diffData, wrapperContext, generationSummary)
           }
         ],
         temperature: config.openai.temperature,
-        max_tokens: config.openai.maxTokens
+        max_tokens: config.openai.maxTokens,
+        response_format: { type: "json_object" } // Force JSON response
       });
       
-      // Add better error handling and response cleaning
-      const rawContent = response.choices[0].message.content.trim();
-      console.log('🔍 Raw LLM response length:', rawContent.length);
-      
-      // Clean the response if it contains markdown
-      const cleanContent = this.cleanJsonResponse(rawContent);
-      
-      const analysis = JSON.parse(cleanContent);
+      const analysis = JSON.parse(response.choices[0].message.content);
       return this.enhanceAnalysis(analysis, diffData, generationSummary);
       
     } catch (error) {
       console.warn('LLM analysis failed:', error.message);
-      if (response?.choices?.[0]?.message?.content) {
-        console.warn('Response content preview:', response.choices[0].message.content.slice(0, 200) + '...');
-      }
       return this.createFallbackAnalysis(diffData, generationSummary);
     }
   }
   
   /**
-   * Clean JSON response by removing markdown formatting if present
-   */
-  cleanJsonResponse(content) {
-    // Remove markdown code blocks if present
-    const jsonBlockMatch = content.match(/```json\s*\n?([\s\S]*?)\n?```/);
-    if (jsonBlockMatch) {
-      return jsonBlockMatch[1].trim();
-    }
-    
-    // Remove any leading/trailing markdown backticks
-    return content.replace(/^`+|`+$/g, '').trim();
-  }
-  
-  /**
-   * System prompt for the LLM
+   * System prompt - let LLM handle all formatting
    */
   getSystemPrompt() {
-    return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis and automated code generation.
+    return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis.
 
-Your task is to analyze changes in OpenAPI-generated TypeScript code and:
-1. Determine impact on custom wrapper layer
-2. Generate COMPLETE working wrapper methods for new endpoints
-3. Create a properly formatted GitHub PR description
-4. Provide specific, actionable automated changes
+Analyze OpenAPI-generated TypeScript code changes and provide a comprehensive analysis as JSON.
 
-When generating wrapper code:
-- Write complete, production-ready TypeScript methods
-- Include proper error handling, type annotations, and JSDoc comments
-- DO NOT remove previous JSDocs comments, error handling, or type annotations if its not strictly necessary for compatiblity
-- Follow the existing wrapper patterns shown in the context
-- Generate full method implementations, not just snippets or comments
+Key responsibilities:
+1. Identify breaking changes and compatibility issues
+2. Generate complete, production-ready wrapper methods for new endpoints
+3. Create ready-to-use GitHub PR descriptions with proper markdown
+4. Provide actionable automated changes
 
-When generating PR descriptions:
-- Create properly formatted GitHub markdown (not escaped \\n characters)
-- Use actual line breaks and proper markdown formatting
-- Make it ready to paste directly into GitHub
+For wrapper code generation:
+- Write complete TypeScript methods with proper types, error handling, and JSDoc
+- Follow existing patterns shown in the context
+- Generate full implementations, not snippets
 
-CRITICAL: Always respond with ONLY valid JSON. Do not use markdown formatting in the JSON response itself. However, within string values (like PR descriptions and code), use proper formatting.`;
+For PR descriptions:
+- Use proper GitHub markdown with headers, emojis, checkboxes
+- Make it copy-paste ready for GitHub
+- Include relevant technical details
+
+Always respond with valid JSON only. Handle all formatting within the JSON values.`;
   }
   
   /**
-   * Build the analysis prompt
+   * Build analysis prompt - simplified data presentation
    */
   buildAnalysisPrompt(diffData, wrapperContext, generationSummary) {
-    const diffHighlights = diffData.structuredDiff ? 
-      this.formatDiffHighlights(diffData.structuredDiff) : 
-      'Diff analysis unavailable';
-    
-    const wrapperSummary = this.formatWrapperSummary(wrapperContext);
-    const existingWrapperPatterns = this.extractWrapperPatterns(wrapperContext);
-    
     return `
-## OpenAPI SDK Update Analysis
+# SDK Analysis Request
 
-### Generation Summary
+## Generation Context
 ${JSON.stringify(generationSummary, null, 2)}
 
-### Generated Code Changes
-${this.formatDiffSummary(diffData)}
+## Changes Overview
+${this.summarizeChanges(diffData)}
 
-### Key Changes Detected
-${diffHighlights}
+## Current Wrapper Structure
+${this.summarizeWrappers(wrapperContext)}
 
-### Current Wrapper Code Structure
-${wrapperSummary}
+## Raw Diff Sample
+${this.limitDiff(diffData.rawDiff, 3000)}
 
-### Existing Wrapper Patterns (for reference when generating new code)
-${existingWrapperPatterns}
+---
 
-### Sample of Raw Diff (truncated)
-${this.truncateDiff(diffData.rawDiff)}
-
-## Analysis Requirements
-
-Analyze these changes and provide a JSON response with this exact structure (return ONLY the JSON):
+Please analyze these changes and respond with JSON in this structure:
 
 {
-  "summary": "Brief description of what changed in the generated SDK",
-  "prDescription": "Complete GitHub PR description with proper markdown formatting (use actual line breaks, not \\n). Include emojis, headers, checklists, and proper markdown formatting. Make it ready to paste directly into GitHub.",
+  "summary": "What changed in the SDK",
+  "prDescription": "Complete GitHub PR description with proper markdown formatting, emojis, headers, and checkboxes. Make it ready to paste into GitHub.",
   "riskAssessment": {
-    "level": "LOW|MEDIUM|HIGH|BREAKING", 
-    "reasoning": "Explanation of why this risk level was assigned",
-    "breakingChanges": ["List of specific breaking changes found"]
+    "level": "LOW|MEDIUM|HIGH|BREAKING",
+    "reasoning": "Why this risk level",
+    "breakingChanges": ["List breaking changes"]
   },
   "impactAnalysis": {
-    "addedEndpoints": ["New API endpoints/methods that were added"],
-    "modifiedEndpoints": ["Existing endpoints that changed signatures/behavior"],
-    "removedEndpoints": ["Endpoints that were removed"],
-    "typeChanges": ["Important interface/type changes"],
-    "importChanges": ["Changes to import paths or module structure"]
+    "addedEndpoints": ["New endpoints"],
+    "modifiedEndpoints": ["Modified endpoints"], 
+    "removedEndpoints": ["Removed endpoints"],
+    "typeChanges": ["Type changes"],
+    "importChanges": ["Import changes"]
   },
   "wrapperImpact": {
-    "affectedFiles": ["wrapper files that need updates"],
-    "requiredChanges": ["Specific changes needed in wrapper"],
-    "suggestedCode": "Complete TypeScript wrapper methods with full implementations, proper types, error handling, and JSDoc comments. Generate COMPLETE working code, not just snippets.",
-    "newWrapperMethods": ["New wrapper methods that should be created"]
+    "affectedFiles": ["Files needing updates"],
+    "requiredChanges": ["Required changes"],
+    "suggestedCode": "Complete TypeScript wrapper methods with full implementations, types, error handling, and JSDoc",
+    "newWrapperMethods": ["New methods to create"]
   },
-  "testingGuidance": [
-    "Specific areas to test manually",
-    "Edge cases to verify", 
-    "Regression tests to run"
-  ],
+  "testingGuidance": ["Testing recommendations"],
   "automatedChanges": {
     "canAutomate": true,
     "suggestedUpdates": {
-      "filename.ts": "COMPLETE updated file content with all existing code plus new wrapper methods. Include the entire file content, not just additions."
+      "filename.ts": "Complete updated file content"
     },
-    "reasoning": "Why these changes can/cannot be automated"
+    "reasoning": "Automation rationale"
   }
 }
 
-## Critical Instructions:
-
-1. **PR Description**: Generate a complete, properly formatted GitHub PR description with:
-   - Proper markdown headers (# ## ###)
-   - Actual line breaks (not \\n)
-   - Emojis and checkboxes
-   - Code blocks with proper backticks
-   - Ready to paste directly into GitHub
-
-2. **Wrapper Code Generation**: For any new endpoints detected:
-   - Generate COMPLETE wrapper methods following existing patterns
-   - Include full TypeScript types and interfaces
-   - Add proper error handling and validation
-   - Include JSDoc comments
-   - Follow the existing code style shown in the wrapper context
-
-3. **File Updates**: In suggestedUpdates, provide COMPLETE file content including:
-   - All existing code
-   - New wrapper methods
-   - Updated imports if needed
-   - Proper formatting and structure
-
-4. **Focus Areas**:
-   - Breaking changes that prevent compilation
-   - New functionality that should be exposed through the wrapper
-   - Complete working implementations, not placeholder comments
-   - Automated updates that include full file content
-
-Remember: Return ONLY valid JSON. Generate complete, working code implementations.`;
+Focus on completeness and actionability. Generate full working code, not placeholders.`;
   }
-  
+
   /**
-   * Extract existing wrapper patterns to help LLM generate consistent code
+   * Summarize changes - let LLM do the heavy lifting
    */
-  extractWrapperPatterns(wrapperContext) {
-    const files = Object.keys(wrapperContext);
-    if (files.length === 0) return 'No wrapper files found for pattern analysis';
+  summarizeChanges(diffData) {
+    const parts = [];
     
-    let patterns = 'Common patterns found in existing wrapper code:\n\n';
-    
-    // Analyze first few files for patterns
-    files.slice(0, 3).forEach(file => {
-      const content = wrapperContext[file];
-      
-      // Extract method patterns
-      const methods = content.match(/export\s+(async\s+)?function\s+\w+[^{]*{[^}]*}/g) || [];
-      if (methods.length > 0) {
-        patterns += `\n${file} method example:\n`;
-        patterns += methods[0].substring(0, 200) + (methods[0].length > 200 ? '...' : '') + '\n';
-      }
-      
-      // Extract class patterns
-      const classes = content.match(/export\s+class\s+\w+[^{]*{[^}]*}/g) || [];
-      if (classes.length > 0) {
-        patterns += `\n${file} class example:\n`;
-        patterns += classes[0].substring(0, 200) + (classes[0].length > 200 ? '...' : '') + '\n';
-      }
-    });
-    
-    return patterns;
-  }
-  
-  /**
-   * Format diff summary for the prompt
-   */
-  formatDiffSummary(diffData) {
-    if (!diffData.summary) return 'No diff summary available';
-    
-    const { filesChanged, insertions, deletions } = diffData.summary;
-    return `Files changed: ${filesChanged}, Insertions: ${insertions}, Deletions: ${deletions}`;
-  }
-  
-  /**
-   * Format diff highlights for easier LLM analysis
-   */
-  formatDiffHighlights(structuredDiff) {
-    const files = structuredDiff.files || [];
-    if (files.length === 0) return 'No file changes detected';
-    
-    let highlights = '';
-    
-    const newFiles = files.filter(f => f.isNewFile);
-    const deletedFiles = files.filter(f => f.isDeletedFile); 
-    const modifiedFiles = files.filter(f => !f.isNewFile && !f.isDeletedFile);
-    
-    if (newFiles.length > 0) {
-      highlights += `\nNew files (${newFiles.length}): ${newFiles.map(f => f.path).join(', ')}`;
+    if (diffData.summary) {
+      parts.push(`Files: ${diffData.summary.filesChanged}, +${diffData.summary.insertions}, -${diffData.summary.deletions}`);
     }
     
-    if (deletedFiles.length > 0) {
-      highlights += `\nDeleted files (${deletedFiles.length}): ${deletedFiles.map(f => f.path).join(', ')}`;
+    if (diffData.structuredDiff?.files) {
+      const files = diffData.structuredDiff.files;
+      parts.push(`New: ${files.filter(f => f.isNewFile).length}, Modified: ${files.filter(f => !f.isNewFile && !f.isDeletedFile).length}, Deleted: ${files.filter(f => f.isDeletedFile).length}`);
     }
     
-    if (modifiedFiles.length > 0) {
-      highlights += `\nModified files (${modifiedFiles.length}): ${modifiedFiles.map(f => f.path).join(', ')}`;
-    }
-    
-    return highlights || 'No significant changes detected';
+    return parts.join(' | ') || 'Changes detected';
   }
-  
+
   /**
-   * Format wrapper code summary
+   * Summarize wrapper context
    */
-  formatWrapperSummary(wrapperContext) {
+  summarizeWrappers(wrapperContext) {
     const files = Object.keys(wrapperContext);
     if (files.length === 0) return 'No wrapper files found';
     
-    let summary = `Wrapper files (${files.length}):\n`;
-    
-    files.forEach(file => {
+    return files.slice(0, 2).map(file => {
       const content = wrapperContext[file];
-      const lines = content.split('\n').length;
-      const exports = (content.match(/export\s+(?:class|function|const|interface|type)/g) || []).length;
-      const imports = (content.match(/import.*from/g) || []).length;
-      
-      summary += `- ${file}: ${lines} lines, ${exports} exports, ${imports} imports\n`;
-    });
-    
-    return summary;
+      const preview = content.split('\n').slice(0, 20).join('\n');
+      return `${file}:\n${preview}${content.length > preview.length ? '\n...' : ''}`;
+    }).join('\n\n---\n\n');
   }
-  
+
   /**
-   * Truncate diff for prompt size management
+   * Limit diff size for prompt efficiency
    */
-  truncateDiff(rawDiff) {
-    const maxLength = 5000; // 5KB of diff context
-    if (!rawDiff || rawDiff.length <= maxLength) return rawDiff || 'No diff available';
-    
-    return rawDiff.slice(0, maxLength) + '\n... (truncated for analysis)';
+  limitDiff(diff, maxChars = 3000) {
+    if (!diff) return 'No diff available';
+    return diff.length > maxChars ? diff.slice(0, maxChars) + '\n...(truncated)' : diff;
   }
   
   /**
-   * Enhance the LLM analysis with metadata
+   * Enhance analysis with metadata
    */
   enhanceAnalysis(analysis, diffData, generationSummary) {
     return {
@@ -314,61 +183,41 @@ Remember: Return ONLY valid JSON. Generate complete, working code implementation
   }
   
   /**
-   * Create fallback analysis when LLM fails
+   * Fallback when LLM fails
    */
   createFallbackAnalysis(diffData, generationSummary) {
     return {
       summary: "LLM analysis failed - manual review required",
-      prDescription: `# 🤖 SDK Update Failed
-
-**Analysis Error:** LLM analysis could not be completed. Manual review required.
-
-## What to do:
-
-1. Review the generated SDK changes manually
-2. Update wrapper methods as needed
-3. Test all functionality before merging
-
-## Files Changed:
-${diffData.summary ? `${diffData.summary.filesChanged} files modified` : 'Unknown changes'}
-
----
-*This PR was created automatically but requires manual analysis due to automation failure.*`,
+      prDescription: "# 🤖 SDK Update - Manual Review Required\n\n**Error:** Automated analysis failed. Please review changes manually.\n\n## Next Steps\n- [ ] Review generated SDK changes\n- [ ] Update wrapper methods\n- [ ] Test functionality\n- [ ] Verify no breaking changes",
       riskAssessment: {
         level: "HIGH",
-        reasoning: "Unable to perform automated analysis - all changes require manual review",
-        breakingChanges: ["Unknown - manual analysis required"]
+        reasoning: "Unable to perform automated analysis",
+        breakingChanges: ["Unknown - requires manual analysis"]
       },
       impactAnalysis: {
         addedEndpoints: [],
         modifiedEndpoints: [],
         removedEndpoints: [],
-        typeChanges: ["Unknown type changes - check generated files"],
-        importChanges: ["Potential import changes - verify wrapper imports"]
+        typeChanges: ["Unknown"],
+        importChanges: ["Unknown"]
       },
       wrapperImpact: {
-        affectedFiles: ["All wrapper files should be reviewed"],
-        requiredChanges: ["Manual analysis required"],
-        suggestedCode: "// LLM analysis unavailable\n// Please review changes manually",
+        affectedFiles: ["Manual review required"],
+        requiredChanges: ["Manual analysis needed"],
+        suggestedCode: "// Manual analysis required",
         newWrapperMethods: []
       },
-      testingGuidance: [
-        "Comprehensive testing required due to analysis failure",
-        "Verify all wrapper methods compile successfully",
-        "Test all API calls for correct functionality",
-        "Check for runtime errors in wrapper usage"
-      ],
+      testingGuidance: ["Comprehensive manual testing required"],
       automatedChanges: {
         canAutomate: false,
         suggestedUpdates: {},
-        reasoning: "Cannot automate changes without proper analysis"
+        reasoning: "Analysis failed - cannot automate safely"
       },
       metadata: {
         analyzedAt: new Date().toISOString(),
         analysisMethod: 'fallback',
         requiresManualReview: true,
-        diffSummary: diffData.summary,
-        generationSummary: generationSummary
+        error: 'LLM analysis failed'
       }
     };
   }
