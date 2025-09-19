@@ -36,7 +36,7 @@ export class LLMAnalyzer {
       
       // Add better error handling and response cleaning
       const rawContent = response.choices[0].message.content.trim();
-      console.log('🔍 Raw LLM response:', rawContent);
+      console.log('🔍 Raw LLM response length:', rawContent.length);
       
       // Clean the response if it contains markdown
       const cleanContent = this.cleanJsonResponse(rawContent);
@@ -46,7 +46,9 @@ export class LLMAnalyzer {
       
     } catch (error) {
       console.warn('LLM analysis failed:', error.message);
-      console.warn('Response content:', response?.choices?.[0]?.message?.content);
+      if (response?.choices?.[0]?.message?.content) {
+        console.warn('Response content preview:', response.choices[0].message.content.slice(0, 200) + '...');
+      }
       return this.createFallbackAnalysis(diffData, generationSummary);
     }
   }
@@ -69,19 +71,26 @@ export class LLMAnalyzer {
    * System prompt for the LLM
    */
   getSystemPrompt() {
-    return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis. 
+    return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis and automated code generation.
 
-Your task is to analyze changes in OpenAPI-generated TypeScript code and determine how these changes impact a custom wrapper layer built on top of the generated SDK.
+Your task is to analyze changes in OpenAPI-generated TypeScript code and:
+1. Determine impact on custom wrapper layer
+2. Generate COMPLETE working wrapper methods for new endpoints
+3. Create a properly formatted GitHub PR description
+4. Provide specific, actionable automated changes
 
-Key responsibilities:
-1. Identify breaking changes that would cause compilation errors in the wrapper
-2. Detect new endpoints/methods that should be wrapped
-3. Find modified types/interfaces that affect wrapper implementations  
-4. Suggest specific code changes needed in the wrapper files
-5. Assess the risk level of changes
-6. Provide actionable testing guidance
+When generating wrapper code:
+- Write complete, production-ready TypeScript methods
+- Include proper error handling, type annotations, and JSDoc comments
+- Follow the existing wrapper patterns shown in the context
+- Generate full method implementations, not just snippets or comments
 
-IMPORTANT: Always respond with ONLY valid JSON. Do not use markdown formatting, code blocks, or any other text. Return pure JSON only.`;
+When generating PR descriptions:
+- Create properly formatted GitHub markdown (not escaped \\n characters)
+- Use actual line breaks and proper markdown formatting
+- Make it ready to paste directly into GitHub
+
+CRITICAL: Always respond with ONLY valid JSON. Do not use markdown formatting in the JSON response itself. However, within string values (like PR descriptions and code), use proper formatting.`;
   }
   
   /**
@@ -93,6 +102,7 @@ IMPORTANT: Always respond with ONLY valid JSON. Do not use markdown formatting, 
       'Diff analysis unavailable';
     
     const wrapperSummary = this.formatWrapperSummary(wrapperContext);
+    const existingWrapperPatterns = this.extractWrapperPatterns(wrapperContext);
     
     return `
 ## OpenAPI SDK Update Analysis
@@ -109,15 +119,19 @@ ${diffHighlights}
 ### Current Wrapper Code Structure
 ${wrapperSummary}
 
+### Existing Wrapper Patterns (for reference when generating new code)
+${existingWrapperPatterns}
+
 ### Sample of Raw Diff (truncated)
 ${this.truncateDiff(diffData.rawDiff)}
 
-## Required Analysis
+## Analysis Requirements
 
-Please analyze these changes and provide a JSON response with this exact structure (return ONLY the JSON, no markdown formatting):
+Analyze these changes and provide a JSON response with this exact structure (return ONLY the JSON):
 
 {
   "summary": "Brief description of what changed in the generated SDK",
+  "prDescription": "Complete GitHub PR description with proper markdown formatting (use actual line breaks, not \\n). Include emojis, headers, checklists, and proper markdown formatting. Make it ready to paste directly into GitHub.",
   "riskAssessment": {
     "level": "LOW|MEDIUM|HIGH|BREAKING", 
     "reasoning": "Explanation of why this risk level was assigned",
@@ -133,7 +147,7 @@ Please analyze these changes and provide a JSON response with this exact structu
   "wrapperImpact": {
     "affectedFiles": ["wrapper files that need updates"],
     "requiredChanges": ["Specific changes needed in wrapper"],
-    "suggestedCode": "TypeScript code snippets showing how to fix issues",
+    "suggestedCode": "Complete TypeScript wrapper methods with full implementations, proper types, error handling, and JSDoc comments. Generate COMPLETE working code, not just snippets.",
     "newWrapperMethods": ["New wrapper methods that should be created"]
   },
   "testingGuidance": [
@@ -144,20 +158,72 @@ Please analyze these changes and provide a JSON response with this exact structu
   "automatedChanges": {
     "canAutomate": true,
     "suggestedUpdates": {
-      "filename.ts": "complete updated file content if changes are simple and safe"
+      "filename.ts": "COMPLETE updated file content with all existing code plus new wrapper methods. Include the entire file content, not just additions."
     },
     "reasoning": "Why these changes can/cannot be automated"
   }
 }
 
-Focus on:
-- Breaking changes that prevent compilation
-- New functionality that should be exposed through the wrapper
-- Modified response types or parameter requirements
-- Import statement changes
-- Opportunity to automate simple, safe updates
+## Critical Instructions:
 
-Remember: Return ONLY valid JSON, no additional text or formatting.`;
+1. **PR Description**: Generate a complete, properly formatted GitHub PR description with:
+   - Proper markdown headers (# ## ###)
+   - Actual line breaks (not \\n)
+   - Emojis and checkboxes
+   - Code blocks with proper backticks
+   - Ready to paste directly into GitHub
+
+2. **Wrapper Code Generation**: For any new endpoints detected:
+   - Generate COMPLETE wrapper methods following existing patterns
+   - Include full TypeScript types and interfaces
+   - Add proper error handling and validation
+   - Include JSDoc comments
+   - Follow the existing code style shown in the wrapper context
+
+3. **File Updates**: In suggestedUpdates, provide COMPLETE file content including:
+   - All existing code
+   - New wrapper methods
+   - Updated imports if needed
+   - Proper formatting and structure
+
+4. **Focus Areas**:
+   - Breaking changes that prevent compilation
+   - New functionality that should be exposed through the wrapper
+   - Complete working implementations, not placeholder comments
+   - Automated updates that include full file content
+
+Remember: Return ONLY valid JSON. Generate complete, working code implementations.`;
+  }
+  
+  /**
+   * Extract existing wrapper patterns to help LLM generate consistent code
+   */
+  extractWrapperPatterns(wrapperContext) {
+    const files = Object.keys(wrapperContext);
+    if (files.length === 0) return 'No wrapper files found for pattern analysis';
+    
+    let patterns = 'Common patterns found in existing wrapper code:\n\n';
+    
+    // Analyze first few files for patterns
+    files.slice(0, 3).forEach(file => {
+      const content = wrapperContext[file];
+      
+      // Extract method patterns
+      const methods = content.match(/export\s+(async\s+)?function\s+\w+[^{]*{[^}]*}/g) || [];
+      if (methods.length > 0) {
+        patterns += `\n${file} method example:\n`;
+        patterns += methods[0].substring(0, 200) + (methods[0].length > 200 ? '...' : '') + '\n';
+      }
+      
+      // Extract class patterns
+      const classes = content.match(/export\s+class\s+\w+[^{]*{[^}]*}/g) || [];
+      if (classes.length > 0) {
+        patterns += `\n${file} class example:\n`;
+        patterns += classes[0].substring(0, 200) + (classes[0].length > 200 ? '...' : '') + '\n';
+      }
+    });
+    
+    return patterns;
   }
   
   /**
@@ -251,6 +317,21 @@ Remember: Return ONLY valid JSON, no additional text or formatting.`;
   createFallbackAnalysis(diffData, generationSummary) {
     return {
       summary: "LLM analysis failed - manual review required",
+      prDescription: `# 🤖 SDK Update Failed
+
+**Analysis Error:** LLM analysis could not be completed. Manual review required.
+
+## What to do:
+
+1. Review the generated SDK changes manually
+2. Update wrapper methods as needed
+3. Test all functionality before merging
+
+## Files Changed:
+${diffData.summary ? `${diffData.summary.filesChanged} files modified` : 'Unknown changes'}
+
+---
+*This PR was created automatically but requires manual analysis due to automation failure.*`,
       riskAssessment: {
         level: "HIGH",
         reasoning: "Unable to perform automated analysis - all changes require manual review",

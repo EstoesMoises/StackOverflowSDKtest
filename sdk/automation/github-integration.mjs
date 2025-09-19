@@ -80,36 +80,41 @@ export class GitHubIntegration {
       message = `feat: update SDK wrapper for API changes`;
     }
     
-    let body = `\\n\\nGenerated SDK changes detected and analyzed:\\n`;
-    body += `- Risk level: ${riskLevel}\\n`;
-    body += `- Automated updates: ${automatedCount} files\\n`;
+    const commitLines = [
+      message,
+      '',
+      'Generated SDK changes detected and analyzed:',
+      `- Risk level: ${riskLevel}`,
+      `- Automated updates: ${automatedCount} files`
+    ];
     
     if (analysis.impactAnalysis.addedEndpoints?.length > 0) {
-      body += `- Added endpoints: ${analysis.impactAnalysis.addedEndpoints.length}\\n`;
+      commitLines.push(`- Added endpoints: ${analysis.impactAnalysis.addedEndpoints.length}`);
     }
     
     if (analysis.impactAnalysis.modifiedEndpoints?.length > 0) {
-      body += `- Modified endpoints: ${analysis.impactAnalysis.modifiedEndpoints.length}\\n`;
+      commitLines.push(`- Modified endpoints: ${analysis.impactAnalysis.modifiedEndpoints.length}`);
     }
     
     if (analysis.riskAssessment.breakingChanges?.length > 0) {
-      body += `- Breaking changes: ${analysis.riskAssessment.breakingChanges.length}\\n`;
+      commitLines.push(`- Breaking changes: ${analysis.riskAssessment.breakingChanges.length}`);
     }
     
-    body += `\\nAnalyzed by: ${analysis.metadata?.llmModel || 'automated system'}`;
+    commitLines.push('', `Analyzed by: ${analysis.metadata?.llmModel || 'automated system'}`);
     
-    return message + body;
+    return commitLines.join('\n');
   }
   
   /**
-   * Create a pull request
+   * Create a pull request using AI-generated description
    */
   async createPullRequest(branchName, analysis, updateResults, instructionsFile) {
     try {
       console.log('📝 Creating pull request...');
       
       const title = this.generatePRTitle(analysis);
-      const body = this.generatePRBody(analysis, updateResults, instructionsFile);
+      // Use the AI-generated PR description directly
+      const body = analysis.prDescription || this.generateFallbackPRBody(analysis, updateResults);
       
       const response = await this.octokit.pulls.create({
         owner: config.github.owner,
@@ -166,152 +171,60 @@ export class GitHubIntegration {
     else if (riskLevel === 'MEDIUM') prefix = '📝';
     else prefix = '✨';
     
-    const title = `${prefix} Auto-update: SDK wrapper changes (${riskLevel} risk)`;
-    
-    return title;
+    return `${prefix} Auto-update: SDK wrapper changes (${riskLevel} risk)`;
   }
   
   /**
-   * Generate PR body with detailed information
+   * Fallback PR body generation (only used if AI doesn't generate one)
    */
-  generatePRBody(analysis, updateResults, instructionsFile) {
-    let body = `## 🤖 Automated SDK Update\\n\\n`;
+  generateFallbackPRBody(analysis, updateResults) {
+    const lines = [
+      '# 🤖 Automated SDK Update',
+      '',
+      `**Summary:** ${analysis.summary}`,
+      '',
+      '## 🎯 Risk Assessment',
+      '',
+      `**Level:** \`${analysis.riskAssessment.level}\``,
+      `**Reasoning:** ${analysis.riskAssessment.reasoning}`,
+      ''
+    ];
     
-    // Summary
-    body += `**Summary:** ${analysis.summary}\\n\\n`;
-    
-    // Risk assessment
-    body += `## 🎯 Risk Assessment\\n\\n`;
-    body += `**Level:** \`${analysis.riskAssessment.level}\`\\n`;
-    body += `**Reasoning:** ${analysis.riskAssessment.reasoning}\\n\\n`;
-    
-    // Breaking changes warning
-    if (analysis.riskAssessment.level === 'BREAKING') {
-      body += `## ⚠️ Breaking Changes Detected\\n\\n`;
-      if (analysis.riskAssessment.breakingChanges?.length > 0) {
-        analysis.riskAssessment.breakingChanges.forEach(change => {
-          body += `- ⚠️ ${change}\\n`;
-        });
-      }
-      body += `\\n**🚨 This PR requires immediate attention and thorough testing!**\\n\\n`;
-    }
-    
-    // What changed
-    body += `## 📊 What Changed\\n\\n`;
-    
-    const impact = analysis.impactAnalysis;
-    if (impact.addedEndpoints?.length > 0) {
-      body += `### ➕ Added Endpoints (${impact.addedEndpoints.length})\\n`;
-      impact.addedEndpoints.forEach(endpoint => body += `- ${endpoint}\\n`);
-      body += `\\n`;
-    }
-    
-    if (impact.modifiedEndpoints?.length > 0) {
-      body += `### 🔄 Modified Endpoints (${impact.modifiedEndpoints.length})\\n`;
-      impact.modifiedEndpoints.forEach(endpoint => body += `- ${endpoint}\\n`);
-      body += `\\n`;
-    }
-    
-    if (impact.removedEndpoints?.length > 0) {
-      body += `### ➖ Removed Endpoints (${impact.removedEndpoints.length})\\n`;
-      impact.removedEndpoints.forEach(endpoint => body += `- ${endpoint}\\n`);
-      body += `\\n`;
-    }
-    
-    if (impact.typeChanges?.length > 0) {
-      body += `### 🏷️ Type Changes\\n`;
-      impact.typeChanges.forEach(change => body += `- ${change}\\n`);
-      body += `\\n`;
-    }
-    
-    // Automated changes
-    body += `## 🔧 Automated Changes\\n\\n`;
     if (updateResults.updatedFiles.length > 0) {
-      body += `✅ **${updateResults.updatedFiles.length} files automatically updated:**\\n`;
+      lines.push('## 🔧 Automated Changes', '');
+      lines.push(`✅ **${updateResults.updatedFiles.length} files automatically updated:**`);
       updateResults.updatedFiles.forEach(file => {
         const status = file.isNewFile ? '🆕 Created' : '📝 Updated';
-        body += `- ${status}: \`${file.file}\`\\n`;
+        lines.push(`- ${status}: \`${file.file}\``);
       });
-    } else {
-      body += `ℹ️ No files were automatically updated.\\n`;
+      lines.push('');
     }
     
-    if (updateResults.errors.length > 0) {
-      body += `\\n❌ **${updateResults.errors.length} files had update errors:**\\n`;
-      updateResults.errors.forEach(error => {
-        body += `- \`${error.file}\`: ${error.error}\\n`;
-      });
-    }
-    body += `\\n`;
+    lines.push('---');
+    lines.push('*This PR was automatically generated by the SDK update automation.*');
     
-    // Manual actions required
-    if (!analysis.automatedChanges?.canAutomate || analysis.wrapperImpact.requiredChanges?.length > 0) {
-      body += `## 👤 Manual Actions Required\\n\\n`;
-      if (instructionsFile) {
-        body += `📋 Detailed instructions have been generated in [\`${instructionsFile}\`](./${instructionsFile})\\n\\n`;
-      }
-      
-      if (analysis.wrapperImpact.requiredChanges?.length > 0) {
-        body += `**Required changes:**\\n`;
-        analysis.wrapperImpact.requiredChanges.forEach((change, index) => {
-          body += `${index + 1}. ${change}\\n`;
-        });
-        body += `\\n`;
-      }
-      
-      if (analysis.wrapperImpact.affectedFiles?.length > 0) {
-        body += `**Files requiring review:**\\n`;
-        analysis.wrapperImpact.affectedFiles.forEach(file => {
-          body += `- \`${file}\`\\n`;
-        });
-        body += `\\n`;
-      }
-    }
-    
-    // Testing checklist
-    if (analysis.testingGuidance?.length > 0) {
-      body += `## ✅ Testing Checklist\\n\\n`;
-      analysis.testingGuidance.forEach(test => {
-        body += `- [ ] ${test}\\n`;
-      });
-      body += `\\n`;
-    }
-    
-    // Code suggestions
-    if (analysis.wrapperImpact.suggestedCode && analysis.wrapperImpact.suggestedCode.trim()) {
-      body += `## 💡 Suggested Code Changes\\n\\n`;
-      body += `\`\`\`typescript\\n${analysis.wrapperImpact.suggestedCode}\\n\`\`\`\\n\\n`;
-    }
-    
-    // Metadata
-    body += `## 🔍 Analysis Details\\n\\n`;
-    body += `- **Analyzed by:** ${analysis.metadata?.llmModel || 'Automated system'}\\n`;
-    body += `- **Analysis time:** ${analysis.metadata?.analyzedAt}\\n`;
-    body += `- **Generation summary:** Files changed: ${analysis.metadata?.generationSummary?.summary?.totalChanges || 'unknown'}\\n`;
-    
-    body += `\\n---\\n`;
-    body += `*This PR was automatically generated by the SDK update automation. Please review carefully before merging.*`;
-    
-    return body;
+    return lines.join('\n');
   }
   
   /**
    * Generate manual PR creation instructions when API fails
    */
   generateManualPRInstructions(branchName, analysis) {
-    return `
-## Manual PR Creation Required
-
-The automated PR creation failed. Please create the PR manually:
-
-1. Go to your repository on GitHub
-2. Click "Compare & pull request" for branch: ${branchName}  
-3. Use this title: ${this.generatePRTitle(analysis)}
-4. Set the base branch to: ${config.defaultBranch}
-5. Add these labels: ${config.prLabels.join(', ')}, risk-${analysis.riskAssessment.level.toLowerCase()}
-
-The branch has been pushed and is ready for PR creation.
-`;
+    const lines = [
+      '## Manual PR Creation Required',
+      '',
+      'The automated PR creation failed. Please create the PR manually:',
+      '',
+      '1. Go to your repository on GitHub',
+      `2. Click "Compare & pull request" for branch: ${branchName}`,
+      `3. Use this title: ${this.generatePRTitle(analysis)}`,
+      `4. Set the base branch to: ${config.defaultBranch}`,
+      `5. Add these labels: ${config.prLabels?.join(', ') || 'none'}, risk-${analysis.riskAssessment.level.toLowerCase()}`,
+      '',
+      'The branch has been pushed and is ready for PR creation.'
+    ];
+    
+    return lines.join('\n');
   }
   
   /**
