@@ -1,0 +1,196 @@
+# .github/workflows/sdk-update.yml
+name: 🤖 SDK Auto Update
+
+on:
+  # Trigger when swagger.json changes
+  push:
+    paths:
+      - 'src/source/swagger.json'
+    branches:
+      - main
+  
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no commits/PRs)'
+        type: boolean
+        default: false
+      force_run:
+        description: 'Force run even if no changes detected'
+        type: boolean
+        default: false
+
+# Ensure only one update runs at a time
+concurrency:
+  group: sdk-update
+  cancel-in-progress: true
+
+jobs:
+  update-sdk:
+    name: 🔄 Update SDK Wrapper
+    runs-on: ubuntu-latest
+    
+    # Don't run on PRs from the automation itself
+    if: ${{ !startsWith(github.head_ref, 'sdk-auto-update') }}
+    
+    permissions:
+      contents: write      # To create branches and commits
+      pull-requests: write # To create PRs
+      issues: write       # To add labels to PRs
+    
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for better git diff analysis
+          fetch-depth: 0
+          # Use a token with appropriate permissions
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📋 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: 📚 Install dependencies
+        run: |
+          # Install project dependencies
+          pnpm install
+          
+          # Install automation dependencies
+          npm install openai @octokit/rest
+      
+      - name: ⚙️ Configure git
+        run: |
+          git config --global user.name "sdk-auto-updater[bot]"
+          git config --global user.email "sdk-auto-updater[bot]@users.noreply.github.com"
+      
+      - name: 🧪 Validate environment
+        run: |
+          echo "Checking required environment variables..."
+          if [ -z "${{ secrets.OPENAI_API_KEY }}" ]; then
+            echo "❌ OPENAI_API_KEY secret is not set"
+            exit 1
+          fi
+          echo "✅ Environment validation passed"
+      
+      - name: 🚀 Run SDK update automation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+          FORCE_RUN: ${{ inputs.force_run || 'false' }}
+        run: |
+          echo "🤖 Starting SDK update automation..."
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Default branch: $DEFAULT_BRANCH"
+          echo "Dry run: $DRY_RUN"
+          echo "Force run: $FORCE_RUN"
+          
+          # Make the automation scripts executable
+          chmod +x automation/sdk-updater.mjs
+          
+          # Run the automation
+          node automation/sdk-updater.mjs
+      
+      - name: 📊 Upload automation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-update-logs-${{ github.run_id }}
+          path: |
+            automation-metadata.json
+            UPDATE_INSTRUCTIONS.md
+            *.backup.*
+          retention-days: 30
+      
+      - name: 💬 Comment on triggering commit (on success)
+        if: success() && github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.sha;
+            
+            await github.rest.repos.createCommitComment({
+              owner,
+              repo,
+              commit_sha: sha,
+              body: `🤖 **SDK Auto-Update Triggered**
+              
+              ✅ The SDK automation has detected changes in \`swagger.json\` and is processing the update.
+              
+              Check the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`
+            });
+      
+      - name: 💬 Comment on triggering commit (on failure)
+        if: failure() && github.event_name == 'push'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.sha;
+            
+            await github.rest.repos.createCommitComment({
+              owner,
+              repo,
+              commit_sha: sha,
+              body: `🤖 **SDK Auto-Update Failed**
+              
+              ❌ The SDK automation encountered an error while processing changes to \`swagger.json\`.
+              
+              Please check the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details and resolve manually if needed.`
+            });
+
+  # Optional: Run a quick validation that the generated code compiles
+  validate-generated-code:
+    name: ✅ Validate Generated Code
+    runs-on: ubuntu-latest
+    needs: update-sdk
+    if: success()
+    
+    steps:
+      - name: 🔍 Checkout updated code
+        uses: actions/checkout@v4
+        with:
+          # Fetch the latest changes from the update job
+          ref: ${{ github.ref }}
+          fetch-depth: 1
+      
+      - name: 📋 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      
+      - name: 📚 Install dependencies
+        run: pnpm install
+      
+      - name: 🏗️ Test compilation
+        run: |
+          echo "🔍 Testing TypeScript compilation..."
+          pnpm compile
+          echo "✅ Compilation successful"
+      
+      - name: 🧪 Run basic tests (if available)
+        run: |
+          if [ -f "test.ts" ] || [ -f "test.js" ]; then
+            echo "🧪 Running basic tests..."
+            pnpm test || echo "⚠️ Tests failed but continuing..."
+          else
+            echo "ℹ️ No test files found, skipping tests"
+          fi

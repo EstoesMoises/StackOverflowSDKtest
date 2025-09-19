@@ -13,7 +13,7 @@
     "/questions": {
       "get": {
         "tags": [
-          "Questions - Main21231213"
+          "Questions - Main2123121312312321"
         ],
         "summary": "Retrieve all questions",
         "description": "Retrieves all questions on the site or team.",

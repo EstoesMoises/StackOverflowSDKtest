@@ -21,14 +21,10 @@
     "clean": "rm -rf dist/",
     "prepublishOnly": "pnpm clean && pnpm build",
     "test": "npx tsx ./test.ts",
-    "sdk:check": "node automation/check-updates.mjs",
-    "sdk:check:info": "node automation/check-updates.mjs --info",
-    "sdk:update": "node automation/check-updates.mjs && pnpm build",
-    "sdk:update:full": "CREATE_PR=true node automation/check-updates.mjs",
-    "sdk:update:no-pr": "CREATE_PR=false node automation/check-updates.mjs",
-    "sdk:analyze": "node automation/analyze-only.mjs",
-    "sdk:create-pr": "node automation/create-pr.mjs",
-    "sdk:git:status": "git status --porcelain && git branch --show-current"
+    "sdk:check": "node automation/sdk-updater.mjs check",
+    "sdk:update": "node automation/sdk-updater.mjs run",
+    "sdk:status": "node automation/sdk-updater.mjs status",
+    "sdk:dry-run": "DRY_RUN=true node automation/sdk-updater.mjs run"
   },
   "keywords": [
     "stackoverflow",
@@ -40,8 +36,10 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@octokit/rest": "^22.0.0",
     "dotenv": "^17.2.1",
     "es6-promise": "^4.2.4",
+    "openai": "^5.21.0",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {

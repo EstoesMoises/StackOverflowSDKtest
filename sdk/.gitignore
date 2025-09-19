@@ -1,2 +1,7 @@
 test.ts
 *.tgz
+# SDK Update Automation
+automation-metadata.json
+UPDATE_INSTRUCTIONS.md
+*.backup.*
+.env
