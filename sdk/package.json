@@ -24,7 +24,8 @@
     "sdk:check": "node automation/sdk-updater.mjs check",
     "sdk:update": "node automation/sdk-updater.mjs run",
     "sdk:status": "node automation/sdk-updater.mjs status",
-    "sdk:dry-run": "DRY_RUN=true node automation/sdk-updater.mjs run"
+    "sdk:dry-run": "DRY_RUN=true node automation/sdk-updater.mjs run",
+    "update-sdk": "node automation/sdk-updater.mjs"
   },
   "keywords": [
     "stackoverflow",
