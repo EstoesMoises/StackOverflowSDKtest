@@ -12,6 +12,7 @@ import { PaginatedUsers } from '../models/PaginatedUsers';
 import { ProblemDetails } from '../models/ProblemDetails';
 import { SortOrder } from '../models/SortOrder';
 import { TagSummaryResponseModel } from '../models/TagSummaryResponseModel';
+import { UserAnalyticsResponseModel } from '../models/UserAnalyticsResponseModel';
 import { UserDetailsResponseModel } from '../models/UserDetailsResponseModel';
 import { UserResponseModel } from '../models/UserResponseModel';
 import { UsersSortParameter } from '../models/UsersSortParameter';
@@ -198,6 +199,66 @@ export class UsersTeamsApiRequestFactory extends BaseAPIRequestFactory {
         // Make Request Context
         const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
         requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+
+        let authMethod: SecurityAuthentication | undefined;
+        // Apply auth methods
+        authMethod = _config.authMethods["oauth2"]
+        if (authMethod?.applySecurityAuthentication) {
+            await authMethod?.applySecurityAuthentication(requestContext);
+        }
+        
+        const defaultAuth: SecurityAuthentication | undefined = _config?.authMethods?.default
+        if (defaultAuth?.applySecurityAuthentication) {
+            await defaultAuth?.applySecurityAuthentication(requestContext);
+        }
+
+        return requestContext;
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param userId User ID
+     * @param team 
+     * @param dateFrom Start date for analytics period
+     * @param dateTo End date for analytics period
+     */
+    public async teamsTeamUsersUserIdAnalyticsGet(userId: number, team: string, dateFrom?: Date, dateTo?: Date, _options?: Configuration): Promise<RequestContext> {
+        let _config = _options || this.configuration;
+
+        // verify required parameter 'userId' is not null or undefined
+        if (userId === null || userId === undefined) {
+            throw new RequiredError("UsersTeamsApi", "teamsTeamUsersUserIdAnalyticsGet", "userId");
+        }
+
+
+        // verify required parameter 'team' is not null or undefined
+        if (team === null || team === undefined) {
+            throw new RequiredError("UsersTeamsApi", "teamsTeamUsersUserIdAnalyticsGet", "team");
+        }
+
+
+
+
+        // Path Params
+        const localVarPath = '/teams/{team}/users/{userId}/analytics'
+            .replace('{' + 'userId' + '}', encodeURIComponent(String(userId)))
+            .replace('{' + 'team' + '}', encodeURIComponent(String(team)));
+
+        // Make Request Context
+        const requestContext = _config.baseServer.makeRequestContext(localVarPath, HttpMethod.GET);
+        requestContext.setHeaderParam("Accept", "application/json, */*;q=0.8")
+
+        // Query Params
+        if (dateFrom !== undefined) {
+            requestContext.setQueryParam("dateFrom", ObjectSerializer.serialize(dateFrom, "Date", "date-time"));
+        }
+
+        // Query Params
+        if (dateTo !== undefined) {
+            requestContext.setQueryParam("dateTo", ObjectSerializer.serialize(dateTo, "Date", "date-time"));
+        }
 
 
         let authMethod: SecurityAuthentication | undefined;
@@ -519,6 +580,63 @@ export class UsersTeamsApiResponseProcessor {
                 ObjectSerializer.parse(await response.body.text(), contentType),
                 "UserDetailsResponseModel", ""
             ) as UserDetailsResponseModel;
+            return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+        }
+
+        throw new ApiException<string | Blob | undefined>(response.httpStatusCode, "Unknown API Status Code!", await response.getBodyAsAny(), response.headers);
+    }
+
+    /**
+     * Unwraps the actual response sent by the server from the response context and deserializes the response content
+     * to the expected objects
+     *
+     * @params response Response returned by the server for a request to teamsTeamUsersUserIdAnalyticsGet
+     * @throws ApiException if the response code was not in [200, 299]
+     */
+     public async teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(response: ResponseContext): Promise<HttpInfo<UserAnalyticsResponseModel >> {
+        const contentType = ObjectSerializer.normalizeMediaType(response.headers["content-type"]);
+        if (isCodeInRange("200", response.httpStatusCode)) {
+            const body: UserAnalyticsResponseModel = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "UserAnalyticsResponseModel", ""
+            ) as UserAnalyticsResponseModel;
+            return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
+        }
+        if (isCodeInRange("404", response.httpStatusCode)) {
+            const body: ProblemDetails = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ProblemDetails", ""
+            ) as ProblemDetails;
+            throw new ApiException<ProblemDetails>(response.httpStatusCode, "User not found", body, response.headers);
+        }
+        if (isCodeInRange("400", response.httpStatusCode)) {
+            const body: ProblemDetails = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ProblemDetails", ""
+            ) as ProblemDetails;
+            throw new ApiException<ProblemDetails>(response.httpStatusCode, "Invalid request", body, response.headers);
+        }
+        if (isCodeInRange("401", response.httpStatusCode)) {
+            const body: string = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "string", ""
+            ) as string;
+            throw new ApiException<string>(response.httpStatusCode, "Unauthorized", body, response.headers);
+        }
+        if (isCodeInRange("403", response.httpStatusCode)) {
+            const body: ProblemDetails = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "ProblemDetails", ""
+            ) as ProblemDetails;
+            throw new ApiException<ProblemDetails>(response.httpStatusCode, "Forbidden", body, response.headers);
+        }
+
+        // Work around for missing responses in specification, e.g. for petstore.yaml
+        if (response.httpStatusCode >= 200 && response.httpStatusCode <= 299) {
+            const body: UserAnalyticsResponseModel = ObjectSerializer.deserialize(
+                ObjectSerializer.parse(await response.body.text(), contentType),
+                "UserAnalyticsResponseModel", ""
+            ) as UserAnalyticsResponseModel;
             return new HttpInfo(response.httpStatusCode, response.headers, response.body, body);
         }
 

@@ -1,7 +1,6 @@
 {
-  "lastHash": "34560aeb08fda1cd19e77ebc4dee9295ab8f1a9e2a8ca1350f53a6bf3bac0a17",
-  "previousHash": "598f3d123af4f45a0750e3e077dc3d1e423d7faddac8caefba10b9f3b075e8af",
-  "lastUpdate": "2025-09-19T01:12:52.050Z",
-  "lastCheck": "2025-09-19T01:12:52.051Z",
-  "sourceFile": "./src/source/swagger.json"
+  "lastHash": "ce9d2a80b2886c38bca13fc235687a5924e15ceae1cc1697a9b1276903323ea4",
+  "previousHash": "34560aeb08fda1cd19e77ebc4dee9295ab8f1a9e2a8ca1350f53a6bf3bac0a17",
+  "lastUpdate": "2025-09-19T21:44:56.374Z",
+  "specPath": "./src/source/swagger.json"
 }
