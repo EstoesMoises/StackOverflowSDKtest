@@ -26,28 +26,28 @@ importers:
 
   sdk:
     dependencies:
-      '@octokit/rest':
-        specifier: ^22.0.0
-        version: 22.0.0
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
       es6-promise:
         specifier: ^4.2.4
         version: 4.2.8
-      openai:
-        specifier: ^5.21.0
-        version: 5.21.0(zod@3.25.76)
       whatwg-fetch:
         specifier: ^3.0.0
         version: 3.6.20
     devDependencies:
+      '@octokit/rest':
+        specifier: ^22.0.0
+        version: 22.0.0
       '@openapitools/openapi-generator-cli':
         specifier: ^2.21.0
         version: 2.21.4
       '@types/node':
         specifier: ^24.1.0
         version: 24.1.0
+      openai:
+        specifier: ^5.21.0
+        version: 5.21.0(zod@3.25.76)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@24.1.0)(typescript@5.8.3)
