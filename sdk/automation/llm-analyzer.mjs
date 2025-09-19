@@ -2,7 +2,7 @@
 import OpenAI from 'openai';
 import { config } from './config.mjs';
 
-export class EnhancedLLMAnalyzer {
+export class LLMAnalyzer {
   constructor() {
     this.client = new OpenAI({
       apiKey: config.openai.apiKey
