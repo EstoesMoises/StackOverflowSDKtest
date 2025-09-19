@@ -10,10 +10,224 @@
     }
   ],
   "paths": {
+    "/users/{userId}/analytics": {
+      "get": {
+        "tags": [
+          "Users - Main"
+        ],
+        "summary": "Retrieve user analytics",
+        "description": "Retrieves analytics data for a user, including activity metrics and engagement statistics.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 123
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Start date for analytics period",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2024-01-01T00:00:00Z"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "End date for analytics period",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2024-12-31T23:59:59Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User analytics found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAnalyticsResponseModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid access token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              null
+            ]
+          }
+        ]
+      }
+    },
+    "/teams/{team}/users/{userId}/analytics": {
+      "get": {
+        "tags": [
+          "Users - Teams"
+        ],
+        "summary": "Retrieve user analytics",
+        "description": "Retrieves analytics data for a user, including activity metrics and engagement statistics.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "User ID",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 123
+          },
+          {
+            "name": "team",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Start date for analytics period",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2024-01-01T00:00:00Z"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "End date for analytics period",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2024-12-31T23:59:59Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User analytics found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAnalyticsResponseModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid access token"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              null
+            ]
+          }
+        ]
+      }
+    },
     "/questions": {
       "get": {
         "tags": [
-          "Questions - Main2123121312312321"
+          "Questions - Main"
         ],
         "summary": "Retrieve all questions",
         "description": "Retrieves all questions on the site or team.",
@@ -14515,6 +14729,79 @@
   },
   "components": {
     "schemas": {
+      "UserAnalyticsResponseModel": {
+        "title": "User Analytics",
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "description": "User ID. The user's unique identifier.",
+            "format": "int32",
+            "example": 123
+          },
+          "totalQuestions": {
+            "type": "integer",
+            "description": "Total Questions. The total number of questions asked by the user.",
+            "format": "int32",
+            "example": 42
+          },
+          "totalAnswers": {
+            "type": "integer",
+            "description": "Total Answers. The total number of answers provided by the user.",
+            "format": "int32",
+            "example": 89
+          },
+          "totalComments": {
+            "type": "integer",
+            "description": "Total Comments. The total number of comments made by the user.",
+            "format": "int32",
+            "example": 156
+          },
+          "totalUpvotesReceived": {
+            "type": "integer",
+            "description": "Total Upvotes Received. The total number of upvotes received on user's content.",
+            "format": "int32",
+            "example": 234
+          },
+          "totalDownvotesReceived": {
+            "type": "integer",
+            "description": "Total Downvotes Received. The total number of downvotes received on user's content.",
+            "format": "int32",
+            "example": 12
+          },
+          "acceptedAnswers": {
+            "type": "integer",
+            "description": "Accepted Answers. The number of answers that were accepted.",
+            "format": "int32",
+            "example": 23
+          },
+          "averageQuestionScore": {
+            "type": "number",
+            "description": "Average Question Score. The average score of the user's questions.",
+            "format": "double",
+            "example": 5.2
+          },
+          "averageAnswerScore": {
+            "type": "number",
+            "description": "Average Answer Score. The average score of the user's answers.",
+            "format": "double",
+            "example": 7.8
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "Period Start. The start date of the analytics period.",
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00Z"
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "Period End. The end date of the analytics period.",
+            "format": "date-time",
+            "example": "2024-12-31T23:59:59Z"
+          }
+        },
+        "additionalProperties": false
+      },
       "AnswerRequestModel": {
         "title": "Answer request",
         "required": [
