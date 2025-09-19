@@ -64,7 +64,7 @@ jobs:
           pnpm install
           
           # Install automation dependencies
-          npm install openai @octokit/rest
+          pnpm install openai @octokit/rest
       
       - name: ⚙️ Configure git
         run: |
