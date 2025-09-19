@@ -11,7 +11,7 @@ CommentsTeamsApi.md
 CommunitiesMainApi.md
 ImagesMainApi.md
 ImagesTeamsApi.md
-QuestionsMain21231213Api.md
+QuestionsMain2123121312312321Api.md
 QuestionsMainApi.md
 QuestionsTeamsApi.md
 README.md
@@ -35,7 +35,7 @@ apis/CommentsTeamsApi.ts
 apis/CommunitiesMainApi.ts
 apis/ImagesMainApi.ts
 apis/ImagesTeamsApi.ts
-apis/QuestionsMain21231213Api.ts
+apis/QuestionsMain2123121312312321Api.ts
 apis/QuestionsMainApi.ts
 apis/QuestionsTeamsApi.ts
 apis/SearchMainApi.ts
