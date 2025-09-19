@@ -83,11 +83,12 @@ Your task is to analyze changes in OpenAPI-generated TypeScript code and:
 When generating wrapper code:
 - Write complete, production-ready TypeScript methods
 - Include proper error handling, type annotations, and JSDoc comments
+- DO NOT remove previous JSDocs comments, error handling, or type annotations if its not strictly necessary for compatiblity
 - Follow the existing wrapper patterns shown in the context
 - Generate full method implementations, not just snippets or comments
 
 When generating PR descriptions:
-- Create properly formatted GitHub markdown (not escaped \\n characters)
+- Create properly formatted GitHub markdown
 - Use actual line breaks and proper markdown formatting
 - Make it ready to paste directly into GitHub
 
