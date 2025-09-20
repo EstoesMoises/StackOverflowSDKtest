@@ -171,7 +171,7 @@ export class GitHubIntegration {
     else if (riskLevel === 'MEDIUM') prefix = '📝';
     else prefix = '✨';
     
-    return `${prefix} Auto-update: SDK wrapper changes (${riskLevel} risk)`;
+    return `${prefix} Auto-update: API Spec has changed (${riskLevel} risk)`;
   }
   
   /**

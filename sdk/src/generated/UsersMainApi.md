@@ -9,6 +9,7 @@ Method | HTTP request | Description
 [**usersGet**](UsersMainApi.md#usersGet) | **GET** /users | Retrieve all users
 [**usersManageGet**](UsersMainApi.md#usersManageGet) | **GET** /users/manage | Manage all users
 [**usersMeGet**](UsersMainApi.md#usersMeGet) | **GET** /users/me | Retrieve logged-in user details
+[**usersUserIdAnalyticsGet**](UsersMainApi.md#usersUserIdAnalyticsGet) | **GET** /users/{userId}/analytics | Retrieve user analytics
 [**usersUserIdGet**](UsersMainApi.md#usersUserIdGet) | **GET** /users/{userId} | Retrieve a user
 [**usersUserIdWatchedTagsGet**](UsersMainApi.md#usersUserIdWatchedTagsGet) | **GET** /users/{userId}/watched-tags | Retrieves a list of tags watched by user
 
@@ -307,6 +308,69 @@ This endpoint does not need any parameter.
 |-------------|-------------|------------------|
 **200** | User details found |  -  |
 **404** | User details not found |  -  |
+**400** | Invalid request |  -  |
+**401** | Unauthorized |  -  |
+**403** | Forbidden |  -  |
+
+[[Back to top]](#) [[Back to API list]](README.md#documentation-for-api-endpoints) [[Back to Model list]](README.md#documentation-for-models) [[Back to README]](README.md)
+
+# **usersUserIdAnalyticsGet**
+> UserAnalyticsResponseModel usersUserIdAnalyticsGet()
+
+Retrieves analytics data for a user, including activity metrics and engagement statistics.
+
+### Example
+
+
+```typescript
+import { createConfiguration, UsersMainApi } from '';
+import type { UsersMainApiUsersUserIdAnalyticsGetRequest } from '';
+
+const configuration = createConfiguration();
+const apiInstance = new UsersMainApi(configuration);
+
+const request: UsersMainApiUsersUserIdAnalyticsGetRequest = {
+    // User ID
+  userId: 123,
+    // Start date for analytics period (optional)
+  dateFrom: new Date('2024-01-01T00:00:00Z'),
+    // End date for analytics period (optional)
+  dateTo: new Date('2024-12-31T23:59:59Z'),
+};
+
+const data = await apiInstance.usersUserIdAnalyticsGet(request);
+console.log('API called successfully. Returned data:', data);
+```
+
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userId** | [**number**] | User ID | defaults to undefined
+ **dateFrom** | [**Date**] | Start date for analytics period | (optional) defaults to undefined
+ **dateTo** | [**Date**] | End date for analytics period | (optional) defaults to undefined
+
+
+### Return type
+
+**UserAnalyticsResponseModel**
+
+### Authorization
+
+[oauth2](README.md#oauth2)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, text/plain
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+**200** | User analytics found |  -  |
+**404** | User not found |  -  |
 **400** | Invalid request |  -  |
 **401** | Unauthorized |  -  |
 **403** | Forbidden |  -  |
