@@ -114,7 +114,7 @@ export class GitHubIntegration {
       
       const title = this.generatePRTitle(analysis);
       // Use the AI-generated PR description directly
-      const body = analysis.prDescription || this.generateFallbackPRBody(analysis, updateResults);
+      const body = analysis.prDescription || this.generateFallbackPRBody(analysis);
       
       const response = await this.octokit.pulls.create({
         owner: config.github.owner,

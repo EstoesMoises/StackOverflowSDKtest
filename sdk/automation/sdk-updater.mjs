@@ -17,6 +17,132 @@ class SDKUpdater {
     this.github = new GitHubIntegration();
   }
   
+    /**
+   * Generate wrapper update guide file
+   */
+  generateUpdateGuideFile(analysis) {
+    const guide = analysis.wrapperUpdateGuide;
+    let md = `# Wrapper Update Guide\n\n`;
+    md += `**Generated:** ${new Date().toISOString()}\n`;
+    md += `**Risk Level:** \`${analysis.riskAssessment.level}\`\n\n`;
+    
+    md += `## 📋 Summary\n\n${analysis.summary}\n\n`;
+    
+    if (analysis.riskAssessment.level === 'BREAKING') {
+      md += `> ⚠️ **BREAKING CHANGES DETECTED** - Immediate attention required!\n\n`;
+    }
+    
+    // Migration steps
+    if (guide?.migrationSteps?.length > 0) {
+      md += `## 🔄 Migration Steps\n\n`;
+      guide.migrationSteps.forEach((step, i) => {
+        md += `${i + 1}. ${step}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Files to update
+    if (guide?.affectedFiles?.length > 0) {
+      md += `## 📝 Files to Update\n\n`;
+      
+      const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+      const sortedFiles = [...guide.affectedFiles].sort((a, b) => 
+        priorityOrder[a.priority] - priorityOrder[b.priority]
+      );
+      
+      for (const file of sortedFiles) {
+        const priorityEmoji = {
+          CRITICAL: '🔴',
+          HIGH: '🟠',
+          MEDIUM: '🟡',
+          LOW: '🟢'
+        }[file.priority];
+        
+        md += `### ${priorityEmoji} ${file.action}: \`src/client/${file.file}\`\n\n`;
+        md += `**Priority:** ${file.priority}\n\n`;
+        
+        if (file.reasoning) {
+          md += `**Why:** ${file.reasoning}\n\n`;
+        }
+        
+        md += `**Instructions:**\n${file.instructions}\n\n`;
+        
+        if (file.codeExample) {
+          md += `**Example:**\n\`\`\`typescript\n${file.codeExample}\n\`\`\`\n\n`;
+        }
+        
+        md += `---\n\n`;
+      }
+    }
+    
+    // New endpoints
+    if (guide?.newEndpointsToWrap?.length > 0) {
+      md += `## ✨ New Endpoints to Wrap\n\n`;
+      
+      for (const endpoint of guide.newEndpointsToWrap) {
+        md += `### ${endpoint.method} ${endpoint.endpoint}\n\n`;
+        md += `**Generated SDK:** \`${endpoint.generatedPath}\`\n`;
+        md += `**Wrapper file:** \`src/client/${endpoint.suggestedWrapperFile}\`\n`;
+        md += `**Suggested method:** \`${endpoint.suggestedMethodName}\`\n\n`;
+        md += `**Example implementation:**\n\`\`\`typescript\n${endpoint.exampleImplementation}\n\`\`\`\n\n`;
+        md += `---\n\n`;
+      }
+    }
+    
+    // Compatibility notes
+    if (guide?.compatibilityNotes?.length > 0) {
+      md += `## ⚠️ Compatibility Notes\n\n`;
+      guide.compatibilityNotes.forEach(note => {
+        md += `- ${note}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Testing
+    if (analysis.testingGuidance?.length > 0) {
+      md += `## 🧪 Testing Checklist\n\n`;
+      analysis.testingGuidance.forEach(test => {
+        md += `- [ ] ${test}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Breaking changes
+    if (analysis.riskAssessment.breakingChanges?.length > 0) {
+      md += `## 💥 Breaking Changes\n\n`;
+      analysis.riskAssessment.breakingChanges.forEach(change => {
+        md += `- ${change}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Impact analysis
+    md += `## 📊 Detailed Impact\n\n`;
+    
+    const impact = analysis.impactAnalysis;
+    if (impact.addedEndpoints?.length > 0) {
+      md += `### Added Endpoints\n`;
+      impact.addedEndpoints.forEach(e => md += `- ${e}\n`);
+      md += `\n`;
+    }
+    
+    if (impact.modifiedEndpoints?.length > 0) {
+      md += `### Modified Endpoints\n`;
+      impact.modifiedEndpoints.forEach(e => md += `- ${e}\n`);
+      md += `\n`;
+    }
+    
+    if (impact.removedEndpoints?.length > 0) {
+      md += `### Removed Endpoints\n`;
+      impact.removedEndpoints.forEach(e => md += `- ${e}\n`);
+      md += `\n`;
+    }
+    
+    const filename = 'WRAPPER_UPDATE_GUIDE.md';
+    fs.writeFileSync(filename, md, 'utf8');
+    
+    return { filename, content: md };
+  }
   /**
    * Main entry point for the automation
    */
@@ -77,17 +203,15 @@ class SDKUpdater {
       console.log(`🎯 Risk assessment: ${analysis.riskAssessment.level}`);
       console.log(`🔧 Can automate: ${analysis.automatedChanges?.canAutomate ? 'Yes' : 'No'}`);
       
-      // Step 5: Apply automated changes
-      console.log('\\n=== Step 5: Applying wrapper updates ===');
-      const updateResults = await this.wrapperUpdater.applyAutomatedChanges(analysis);
-      
-      console.log(`✅ Automated updates: ${updateResults.updatedFiles.length} files`);
-      if (updateResults.errors.length > 0) {
-        console.log(`⚠️ Update errors: ${updateResults.errors.length} files`);
-      }
-      
-      // Generate manual instructions
-      const instructionsFile = await this.wrapperUpdater.saveManualInstructions(analysis);
+      // Step 5: Generate update instructions
+      console.log('\n=== Step 5: Generating wrapper update guide ===');
+      const updateGuide = this.generateUpdateGuideFile(analysis);
+
+      console.log(`📋 Update guide saved: ${updateGuide.filename}`);
+      console.log(`📊 Summary:`);
+      console.log(`   - Files affected: ${analysis.wrapperUpdateGuide?.affectedFiles?.length || 0}`);
+      console.log(`   - New endpoints: ${analysis.wrapperUpdateGuide?.newEndpointsToWrap?.length || 0}`);
+      console.log(`   - Migration steps: ${analysis.wrapperUpdateGuide?.migrationSteps?.length || 0}`);
       
       // Step 6: Validate updated files
       if (updateResults.updatedFiles.length > 0) {
