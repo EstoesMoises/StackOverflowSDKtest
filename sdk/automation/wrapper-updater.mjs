@@ -42,7 +42,19 @@ export class WrapperUpdater {
    * Apply update to a single file with safety checks
    */
   async applyFileUpdate(filename, newContent, results) {
-    const fullPath = path.join(config.clientDir, filename);
+    // Normalize the path - handle both relative and full paths
+    let fullPath;
+    
+    if (filename.startsWith('src/client/')) {
+      // Already has full path from project root
+      fullPath = path.join(process.cwd(), filename);
+    } else if (filename.startsWith('client/')) {
+      // Starts with client/ but missing src/
+      fullPath = path.join(process.cwd(), 'src', filename);
+    } else {
+      // Relative path like "users.ts" or "apis/users.ts"
+      fullPath = path.join(config.clientDir, filename);
+    }
     
     // Safety checks
     if (!newContent || typeof newContent !== 'string') {
@@ -52,6 +64,10 @@ export class WrapperUpdater {
     if (!filename.endsWith('.ts') && !filename.endsWith('.js')) {
       throw new Error('Only TypeScript and JavaScript files are supported');
     }
+    
+    // Create directory if it doesn't exist
+    const directory = path.dirname(fullPath);
+    await fs.mkdir(directory, { recursive: true });
     
     // Check if file exists
     const fileExists = await fs.access(fullPath).then(() => true).catch(() => false);
