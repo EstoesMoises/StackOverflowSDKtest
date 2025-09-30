@@ -212,7 +212,7 @@ class SDKUpdater {
       if (!config.dryRun) {
         console.log('\\n=== Step 7: Creating branch and PR ===');
         
-        const gitResult = await this.github.createBranchAndCommit(analysis, updateResults);
+        const gitResult = await this.github.createBranchAndCommit(analysis, updateGuide);
         
         if (!gitResult) {
           console.log('⚠️ No changes to commit');
@@ -230,8 +230,7 @@ class SDKUpdater {
           prResult = await this.github.createPullRequest(
             gitResult.branchName,
             analysis,
-            updateResults,
-            instructionsFile
+            updateGuide
           );
           
           if (prResult.success) {
@@ -242,14 +241,12 @@ class SDKUpdater {
           }
         }
         
-        return this.createResult({
-          updated: true,
-          branchName: gitResult.branchName,
-          pullRequest: prResult,
-          analysis: analysis,
-          updateResults: updateResults,
-          instructionsFile: instructionsFile
-        });
+      return this.createResult({
+        updated: true,
+        dryRun: true,
+        analysis: analysis,
+        updateGuide: updateGuide  // Changed from updateResults and instructionsFile
+      });
         
       } else {
         console.log('🧪 DRY-RUN: Skipping git operations and PR creation');
@@ -318,11 +315,8 @@ class SDKUpdater {
       }
     }
     
-    if (result.updateResults) {
-      console.log(`🔧 Automated Updates: ${result.updateResults.updatedFiles.length} files`);
-      if (result.updateResults.errors.length > 0) {
-        console.log(`❌ Update Errors: ${result.updateResults.errors.length} files`);
-      }
+    if (result.updateGuide) {
+      console.log(`📋 Update Guide: ${result.updateGuide.filename}`);
     }
     
     if (result.branchName) {
@@ -331,10 +325,6 @@ class SDKUpdater {
     
     if (result.pullRequest?.success) {
       console.log(`📝 Pull Request: ${result.pullRequest.url}`);
-    }
-    
-    if (result.instructionsFile) {
-      console.log(`📋 Instructions: ${result.instructionsFile}`);
     }
     
     // Testing reminders
