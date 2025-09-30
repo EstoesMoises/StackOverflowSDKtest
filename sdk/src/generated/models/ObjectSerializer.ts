@@ -64,6 +64,7 @@ export * from '../models/TagResponseModel';
 export * from '../models/TagSummaryResponseModel';
 export * from '../models/TagWatchersResponseModel';
 export * from '../models/TagsSortParameter';
+export * from '../models/UserAnalyticsResponseModel';
 export * from '../models/UserDetailsResponseModel';
 export * from '../models/UserGroupRequestModel';
 export * from '../models/UserGroupResponseModel';
@@ -138,6 +139,7 @@ import { TagResponseModel } from '../models/TagResponseModel';
 import { TagSummaryResponseModel } from '../models/TagSummaryResponseModel';
 import { TagWatchersResponseModel } from '../models/TagWatchersResponseModel';
 import { TagsSortParameter } from '../models/TagsSortParameter';
+import { UserAnalyticsResponseModel } from '../models/UserAnalyticsResponseModel';
 import { UserDetailsResponseModel } from '../models/UserDetailsResponseModel';
 import { UserGroupRequestModel } from '../models/UserGroupRequestModel';
 import { UserGroupResponseModel } from '../models/UserGroupResponseModel';
@@ -230,6 +232,7 @@ let typeMap: {[index: string]: any} = {
     "TagResponseModel": TagResponseModel,
     "TagSummaryResponseModel": TagSummaryResponseModel,
     "TagWatchersResponseModel": TagWatchersResponseModel,
+    "UserAnalyticsResponseModel": UserAnalyticsResponseModel,
     "UserDetailsResponseModel": UserDetailsResponseModel,
     "UserGroupRequestModel": UserGroupRequestModel,
     "UserGroupResponseModel": UserGroupResponseModel,
