@@ -11,7 +11,6 @@ CommentsTeamsApi.md
 CommunitiesMainApi.md
 ImagesMainApi.md
 ImagesTeamsApi.md
-QuestionsMain21231213Api.md
 QuestionsMainApi.md
 QuestionsTeamsApi.md
 README.md
@@ -35,7 +34,6 @@ apis/CommentsTeamsApi.ts
 apis/CommunitiesMainApi.ts
 apis/ImagesMainApi.ts
 apis/ImagesTeamsApi.ts
-apis/QuestionsMain21231213Api.ts
 apis/QuestionsMainApi.ts
 apis/QuestionsTeamsApi.ts
 apis/SearchMainApi.ts
@@ -123,6 +121,7 @@ models/TagResponseModel.ts
 models/TagSummaryResponseModel.ts
 models/TagWatchersResponseModel.ts
 models/TagsSortParameter.ts
+models/UserAnalyticsResponseModel.ts
 models/UserDetailsResponseModel.ts
 models/UserGroupRequestModel.ts
 models/UserGroupResponseModel.ts

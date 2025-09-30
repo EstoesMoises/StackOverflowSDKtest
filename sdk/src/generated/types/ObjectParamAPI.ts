@@ -68,6 +68,7 @@ import { TagResponseModel } from '../models/TagResponseModel';
 import { TagSummaryResponseModel } from '../models/TagSummaryResponseModel';
 import { TagWatchersResponseModel } from '../models/TagWatchersResponseModel';
 import { TagsSortParameter } from '../models/TagsSortParameter';
+import { UserAnalyticsResponseModel } from '../models/UserAnalyticsResponseModel';
 import { UserDetailsResponseModel } from '../models/UserDetailsResponseModel';
 import { UserGroupRequestModel } from '../models/UserGroupRequestModel';
 import { UserGroupResponseModel } from '../models/UserGroupResponseModel';
@@ -2984,6 +2985,88 @@ export class ObjectImagesTeamsApi {
 import { ObservableQuestionsMainApi } from "./ObservableAPI";
 import { QuestionsMainApiRequestFactory, QuestionsMainApiResponseProcessor} from "../apis/QuestionsMainApi";
 
+export interface QuestionsMainApiQuestionsGetRequest {
+    /**
+     * 
+     * Minimum: 1
+     * Maximum: 2147483647
+     * Defaults to: undefined
+     * @type number
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    page?: number
+    /**
+     * 
+     * Defaults to: undefined
+     * @type 15 | 30 | 50 | 100
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    pageSize?: 15 | 30 | 50 | 100
+    /**
+     * 
+     * Defaults to: undefined
+     * @type QuestionSortParameter
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    sort?: QuestionSortParameter
+    /**
+     * 
+     * Defaults to: undefined
+     * @type SortOrder
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    order?: SortOrder
+    /**
+     * 
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    isAnswered?: boolean
+    /**
+     * 
+     * Defaults to: undefined
+     * @type boolean
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    hasAcceptedAnswer?: boolean
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Array&lt;number&gt;
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    questionId?: Array<number>
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Array&lt;number&gt;
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    tagId?: Array<number>
+    /**
+     * 
+     * Defaults to: undefined
+     * @type number
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    authorId?: number
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Date
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    _from?: Date
+    /**
+     * 
+     * Defaults to: undefined
+     * @type Date
+     * @memberof QuestionsMainApiquestionsGet
+     */
+    to?: Date
+}
+
 export interface QuestionsMainApiQuestionsPostRequest {
     /**
      * 
@@ -3204,6 +3287,24 @@ export class ObjectQuestionsMainApi {
 
     public constructor(configuration: Configuration, requestFactory?: QuestionsMainApiRequestFactory, responseProcessor?: QuestionsMainApiResponseProcessor) {
         this.api = new ObservableQuestionsMainApi(configuration, requestFactory, responseProcessor);
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param param the request object
+     */
+    public questionsGetWithHttpInfo(param: QuestionsMainApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
+        return this.api.questionsGetWithHttpInfo(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
+    }
+
+    /**
+     * Retrieves all questions on the site or team.
+     * Retrieve all questions
+     * @param param the request object
+     */
+    public questionsGet(param: QuestionsMainApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
+        return this.api.questionsGet(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 
     /**
@@ -3456,118 +3557,6 @@ export class ObjectQuestionsMainApi {
      */
     public questionsQuestionIdUpvotePost(param: QuestionsMainApiQuestionsQuestionIdUpvotePostRequest, options?: ConfigurationOptions): Promise<QuestionResponseModel> {
         return this.api.questionsQuestionIdUpvotePost(param.questionId,  options).toPromise();
-    }
-
-}
-
-import { ObservableQuestionsMain21231213Api } from "./ObservableAPI";
-import { QuestionsMain21231213ApiRequestFactory, QuestionsMain21231213ApiResponseProcessor} from "../apis/QuestionsMain21231213Api";
-
-export interface QuestionsMain21231213ApiQuestionsGetRequest {
-    /**
-     * 
-     * Minimum: 1
-     * Maximum: 2147483647
-     * Defaults to: undefined
-     * @type number
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    page?: number
-    /**
-     * 
-     * Defaults to: undefined
-     * @type 15 | 30 | 50 | 100
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    pageSize?: 15 | 30 | 50 | 100
-    /**
-     * 
-     * Defaults to: undefined
-     * @type QuestionSortParameter
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    sort?: QuestionSortParameter
-    /**
-     * 
-     * Defaults to: undefined
-     * @type SortOrder
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    order?: SortOrder
-    /**
-     * 
-     * Defaults to: undefined
-     * @type boolean
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    isAnswered?: boolean
-    /**
-     * 
-     * Defaults to: undefined
-     * @type boolean
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    hasAcceptedAnswer?: boolean
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Array&lt;number&gt;
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    questionId?: Array<number>
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Array&lt;number&gt;
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    tagId?: Array<number>
-    /**
-     * 
-     * Defaults to: undefined
-     * @type number
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    authorId?: number
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Date
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    _from?: Date
-    /**
-     * 
-     * Defaults to: undefined
-     * @type Date
-     * @memberof QuestionsMain21231213ApiquestionsGet
-     */
-    to?: Date
-}
-
-export class ObjectQuestionsMain21231213Api {
-    private api: ObservableQuestionsMain21231213Api
-
-    public constructor(configuration: Configuration, requestFactory?: QuestionsMain21231213ApiRequestFactory, responseProcessor?: QuestionsMain21231213ApiResponseProcessor) {
-        this.api = new ObservableQuestionsMain21231213Api(configuration, requestFactory, responseProcessor);
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param param the request object
-     */
-    public questionsGetWithHttpInfo(param: QuestionsMain21231213ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<HttpInfo<PaginatedQuestions>> {
-        return this.api.questionsGetWithHttpInfo(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
-    }
-
-    /**
-     * Retrieves all questions on the site or team.
-     * Retrieve all questions
-     * @param param the request object
-     */
-    public questionsGet(param: QuestionsMain21231213ApiQuestionsGetRequest = {}, options?: ConfigurationOptions): Promise<PaginatedQuestions> {
-        return this.api.questionsGet(param.page, param.pageSize, param.sort, param.order, param.isAnswered, param.hasAcceptedAnswer, param.questionId, param.tagId, param.authorId, param._from, param.to,  options).toPromise();
     }
 
 }
@@ -5784,6 +5773,31 @@ export interface UsersMainApiUsersManageGetRequest {
 export interface UsersMainApiUsersMeGetRequest {
 }
 
+export interface UsersMainApiUsersUserIdAnalyticsGetRequest {
+    /**
+     * User ID
+     * Minimum: 1
+     * Defaults to: undefined
+     * @type number
+     * @memberof UsersMainApiusersUserIdAnalyticsGet
+     */
+    userId: number
+    /**
+     * Start date for analytics period
+     * Defaults to: undefined
+     * @type Date
+     * @memberof UsersMainApiusersUserIdAnalyticsGet
+     */
+    dateFrom?: Date
+    /**
+     * End date for analytics period
+     * Defaults to: undefined
+     * @type Date
+     * @memberof UsersMainApiusersUserIdAnalyticsGet
+     */
+    dateTo?: Date
+}
+
 export interface UsersMainApiUsersUserIdGetRequest {
     /**
      * User ID
@@ -5897,6 +5911,24 @@ export class ObjectUsersMainApi {
      */
     public usersMeGet(param: UsersMainApiUsersMeGetRequest = {}, options?: ConfigurationOptions): Promise<UserDetailsResponseModel> {
         return this.api.usersMeGet( options).toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param param the request object
+     */
+    public usersUserIdAnalyticsGetWithHttpInfo(param: UsersMainApiUsersUserIdAnalyticsGetRequest, options?: ConfigurationOptions): Promise<HttpInfo<UserAnalyticsResponseModel>> {
+        return this.api.usersUserIdAnalyticsGetWithHttpInfo(param.userId, param.dateFrom, param.dateTo,  options).toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param param the request object
+     */
+    public usersUserIdAnalyticsGet(param: UsersMainApiUsersUserIdAnalyticsGetRequest, options?: ConfigurationOptions): Promise<UserAnalyticsResponseModel> {
+        return this.api.usersUserIdAnalyticsGet(param.userId, param.dateFrom, param.dateTo,  options).toPromise();
     }
 
     /**
@@ -6024,6 +6056,38 @@ export interface UsersTeamsApiTeamsTeamUsersMeGetRequest {
     team: string
 }
 
+export interface UsersTeamsApiTeamsTeamUsersUserIdAnalyticsGetRequest {
+    /**
+     * User ID
+     * Minimum: 1
+     * Defaults to: undefined
+     * @type number
+     * @memberof UsersTeamsApiteamsTeamUsersUserIdAnalyticsGet
+     */
+    userId: number
+    /**
+     * 
+     * Defaults to: undefined
+     * @type string
+     * @memberof UsersTeamsApiteamsTeamUsersUserIdAnalyticsGet
+     */
+    team: string
+    /**
+     * Start date for analytics period
+     * Defaults to: undefined
+     * @type Date
+     * @memberof UsersTeamsApiteamsTeamUsersUserIdAnalyticsGet
+     */
+    dateFrom?: Date
+    /**
+     * End date for analytics period
+     * Defaults to: undefined
+     * @type Date
+     * @memberof UsersTeamsApiteamsTeamUsersUserIdAnalyticsGet
+     */
+    dateTo?: Date
+}
+
 export interface UsersTeamsApiTeamsTeamUsersUserIdGetRequest {
     /**
      * User ID
@@ -6133,6 +6197,24 @@ export class ObjectUsersTeamsApi {
      */
     public teamsTeamUsersMeGet(param: UsersTeamsApiTeamsTeamUsersMeGetRequest, options?: ConfigurationOptions): Promise<UserDetailsResponseModel> {
         return this.api.teamsTeamUsersMeGet(param.team,  options).toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param param the request object
+     */
+    public teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(param: UsersTeamsApiTeamsTeamUsersUserIdAnalyticsGetRequest, options?: ConfigurationOptions): Promise<HttpInfo<UserAnalyticsResponseModel>> {
+        return this.api.teamsTeamUsersUserIdAnalyticsGetWithHttpInfo(param.userId, param.team, param.dateFrom, param.dateTo,  options).toPromise();
+    }
+
+    /**
+     * Retrieves analytics data for a user, including activity metrics and engagement statistics.
+     * Retrieve user analytics
+     * @param param the request object
+     */
+    public teamsTeamUsersUserIdAnalyticsGet(param: UsersTeamsApiTeamsTeamUsersUserIdAnalyticsGetRequest, options?: ConfigurationOptions): Promise<UserAnalyticsResponseModel> {
+        return this.api.teamsTeamUsersUserIdAnalyticsGet(param.userId, param.team, param.dateFrom, param.dateTo,  options).toPromise();
     }
 
     /**
