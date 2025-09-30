@@ -12,15 +12,86 @@ export class LLMAnalyzer {
   /**
    * Analyze changes and their impact on wrapper code
    */
+// llm-analyzer.mjs
   async analyzeChanges(diffData, wrapperContext, generationSummary) {
     try {
       console.log('🤖 Analyzing changes with Claude...');
       
       const response = await this.client.messages.create({
         model: config.anthropic.model,
-        max_tokens: config.anthropic.maxTokens,
+        max_tokens: 8192, // Increased for complete files
         temperature: config.anthropic.temperature,
-        system: this.getSystemPrompt(),
+        tools: [{
+          name: "provide_analysis",
+          description: "Provide structured analysis of SDK changes",
+          input_schema: {
+            type: "object",
+            properties: {
+              summary: { 
+                type: "string",
+                description: "What changed in the SDK" 
+              },
+              prDescription: { 
+                type: "string",
+                description: "Complete GitHub PR description with markdown" 
+              },
+              riskAssessment: {
+                type: "object",
+                properties: {
+                  level: { 
+                    type: "string",
+                    enum: ["LOW", "MEDIUM", "HIGH", "BREAKING"]
+                  },
+                  reasoning: { type: "string" },
+                  breakingChanges: { 
+                    type: "array",
+                    items: { type: "string" }
+                  }
+                },
+                required: ["level", "reasoning", "breakingChanges"]
+              },
+              impactAnalysis: {
+                type: "object",
+                properties: {
+                  addedEndpoints: { type: "array", items: { type: "string" } },
+                  modifiedEndpoints: { type: "array", items: { type: "string" } },
+                  removedEndpoints: { type: "array", items: { type: "string" } },
+                  typeChanges: { type: "array", items: { type: "string" } },
+                  importChanges: { type: "array", items: { type: "string" } }
+                },
+                required: ["addedEndpoints", "modifiedEndpoints", "removedEndpoints", "typeChanges", "importChanges"]
+              },
+              wrapperImpact: {
+                type: "object",
+                properties: {
+                  affectedFiles: { type: "array", items: { type: "string" } },
+                  requiredChanges: { type: "array", items: { type: "string" } },
+                  suggestedCode: { type: "string" },
+                  newWrapperMethods: { type: "array", items: { type: "string" } }
+                },
+                required: ["affectedFiles", "requiredChanges", "suggestedCode", "newWrapperMethods"]
+              },
+              testingGuidance: {
+                type: "array",
+                items: { type: "string" }
+              },
+              automatedChanges: {
+                type: "object",
+                properties: {
+                  canAutomate: { type: "boolean" },
+                  suggestedUpdates: {
+                    type: "object",
+                    additionalProperties: { type: "string" }
+                  },
+                  reasoning: { type: "string" }
+                },
+                required: ["canAutomate", "suggestedUpdates", "reasoning"]
+              }
+            },
+            required: ["summary", "prDescription", "riskAssessment", "impactAnalysis", "wrapperImpact", "testingGuidance", "automatedChanges"]
+          }
+        }],
+        tool_choice: { type: "tool", name: "provide_analysis" },
         messages: [
           {
             role: "user",
@@ -29,15 +100,13 @@ export class LLMAnalyzer {
         ]
       });
       
-      // Extract JSON from Claude's response
-      const textContent = response.content[0].text;
-      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
-      
-      if (!jsonMatch) {
-        throw new Error('Could not extract JSON from Claude response');
+      // Extract tool call result - no parsing needed!
+      const toolUse = response.content.find(block => block.type === 'tool_use');
+      if (!toolUse) {
+        throw new Error('No tool use found in response');
       }
       
-      const analysis = JSON.parse(jsonMatch[0]);
+      const analysis = toolUse.input;
       return this.enhanceAnalysis(analysis, diffData, generationSummary);
       
     } catch (error) {
@@ -54,12 +123,12 @@ export class LLMAnalyzer {
 
 ⚠️ CRITICAL RULES - NO PLACEHOLDERS ALLOWED:
 1. NEVER use placeholders like "// rest of your code", "// ... existing code ...", "...", or "// rest of the file"
-2. When providing file updates in automatedChanges.completeFiles, you MUST include the ENTIRE file content
+2. When providing file updates in automatedChanges.suggestedUpdates, you MUST include the ENTIRE file content
 3. Every code block must be production-ready and executable as-is with NO omissions
-4. If you cannot generate the complete file, do not include it in completeFiles
+4. If you cannot generate the complete file, do not include it in suggestedUpdates
 5. All imports, all methods, all types, all existing code must be preserved and included
 
-Analyze OpenAPI-generated TypeScript code changes and provide a comprehensive analysis as JSON.
+Analyze OpenAPI-generated TypeScript code changes and use the provide_analysis tool to return structured results.
 
 Key responsibilities:
 1. Identify breaking changes and compatibility issues
@@ -77,28 +146,19 @@ For PR descriptions:
 - Make it copy-paste ready for GitHub
 - Include relevant technical details
 
-Always respond with valid JSON only. Handle all formatting within the JSON values.`;
+Use the provide_analysis tool to return your structured analysis.`;
 }
   
   /**
    * Build analysis prompt - simplified data presentation
    */
-  buildAnalysisPrompt(diffData, wrapperContext, generationSummary) {
-    return `
+buildAnalysisPrompt(diffData, wrapperContext, generationSummary) {
+  return `
 # SDK Analysis Request
 
 ## Project Structure
 Base wrapper directory: src/client/
-Wrapper files should be placed in: src/client/
-
-Example file paths (use these exact patterns):
-- src/client/users.ts
-- src/client/questions.ts  
-- src/client/answers.ts
-- src/client/index.ts
-etc.
-
-⚠️ CRITICAL: All file paths in completeFiles must start with "src/client/"
+All wrapper files must use paths starting with "src/client/"
 
 ## Generation Context
 ${JSON.stringify(generationSummary, null, 2)}
@@ -106,77 +166,21 @@ ${JSON.stringify(generationSummary, null, 2)}
 ## Changes Overview
 ${this.summarizeChanges(diffData)}
 
-## Current Wrapper Structure
+## Complete Current Wrapper Files
 ${this.provideFullWrapperContext(wrapperContext)}
 
-## Raw Diff Sample
-${this.limitDiff(diffData.rawDiff, 3000)}
+## Raw Diff (first 5000 chars)
+${this.limitDiff(diffData.rawDiff, 5000)}
 
 ---
 
-⚠️ CRITICAL INSTRUCTIONS FOR FILE GENERATION:
+Analyze these changes and use the provide_analysis tool with your findings.
 
-File Path Rules:
-- ALL file paths in completeFiles MUST start with "src/client/"
-- New wrapper files go in src/client/ (e.g., src/client/newEndpoint.ts)
-- Keep the same naming pattern as existing files shown above
-- Use lowercase filenames matching the resource name (users.ts, questions.ts, etc.)
-
-When generating files in automatedChanges.completeFiles:
-- Include the ENTIRE file from start to finish
-- NO placeholders, NO "rest of your code", NO ellipsis (...)
-- Include ALL imports at the top
-- Include ALL existing methods and classes
-- Include ALL type definitions
-- Include the complete file structure
-
-If you need to modify an existing file:
-1. Take the COMPLETE original file content from the "COMPLETE Current Wrapper Files" section above
-2. Apply your modifications (add new methods, update imports, etc.)
-3. Return the ENTIRE modified file with the correct path (src/client/filename.ts)
-
-If you need to create a new file:
-1. Follow the patterns from existing wrapper files
-2. Use the correct path: src/client/filename.ts
-3. Include complete implementation
-
----
-
-Please analyze these changes and respond with JSON in this structure:
-
-{
-  "summary": "What changed in the SDK. Be specific.",
-  "prDescription": "Complete GitHub PR description with proper markdown formatting, emojis, headers, and checkboxes. Make it ready to paste into GitHub.",
-  "riskAssessment": {
-    "level": "LOW|MEDIUM|HIGH|BREAKING",
-    "reasoning": "Why this risk level",
-    "breakingChanges": ["List breaking changes"]
-  },
-  "impactAnalysis": {
-    "addedEndpoints": ["New endpoints"],
-    "modifiedEndpoints": ["Modified endpoints"], 
-    "removedEndpoints": ["Removed endpoints"],
-    "typeChanges": ["Type changes"],
-    "importChanges": ["Import changes"]
-  },
-  "wrapperImpact": {
-    "affectedFiles": ["Files needing updates"],
-    "requiredChanges": ["Required changes"],
-    "suggestedCode": "Complete TypeScript wrapper methods with full implementations, types, error handling, and JSDoc",
-    "newWrapperMethods": ["New methods to create"]
-  },
-  "testingGuidance": ["Testing recommendations"],
-  "automatedChanges": {
-    "canAutomate": true,
-    "suggestedUpdates": {
-      "filename.ts": "Complete updated file content"
-    },
-    "reasoning": "Automation rationale"
-  }
+Remember: 
+- suggestedUpdates must contain COMPLETE file contents, no placeholders
+- All file paths must start with "src/client/"
+- Follow patterns from existing wrapper files shown above`;
 }
-
-Focus on completeness and actionability. Generate full working code, not placeholders.`;
-  }
 
   /**
    * Summarize changes - let LLM do the heavy lifting
