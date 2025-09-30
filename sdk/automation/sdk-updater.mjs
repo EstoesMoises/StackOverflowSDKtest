@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 // sdk-updater.mjs - Main orchestrator for SDK automation
+import fs from 'fs';
 import { config, validateConfig } from './config.mjs';
 import { OpenAPIGenerator } from './openapi-generator.mjs';
 import { DiffAnalyzer } from './diff-analyzer.mjs';
 import { LLMAnalyzer } from './llm-analyzer.mjs';
-import { WrapperUpdater } from './wrapper-updater.mjs';
 import { GitHubIntegration } from './github-integration.mjs';
 
 class SDKUpdater {
@@ -13,7 +13,6 @@ class SDKUpdater {
     this.generator = new OpenAPIGenerator();
     this.diffAnalyzer = new DiffAnalyzer();
     this.llmAnalyzer = new LLMAnalyzer();
-    this.wrapperUpdater = new WrapperUpdater();
     this.github = new GitHubIntegration();
   }
   
@@ -208,22 +207,8 @@ class SDKUpdater {
       const updateGuide = this.generateUpdateGuideFile(analysis);
 
       console.log(`📋 Update guide saved: ${updateGuide.filename}`);
-      console.log(`📊 Summary:`);
-      console.log(`   - Files affected: ${analysis.wrapperUpdateGuide?.affectedFiles?.length || 0}`);
-      console.log(`   - New endpoints: ${analysis.wrapperUpdateGuide?.newEndpointsToWrap?.length || 0}`);
-      console.log(`   - Migration steps: ${analysis.wrapperUpdateGuide?.migrationSteps?.length || 0}`);
       
-      // Step 6: Validate updated files
-      if (updateResults.updatedFiles.length > 0) {
-        console.log('\\n=== Step 6: Validating changes ===');
-        const validation = await this.wrapperUpdater.validateUpdatedFiles(updateResults.updatedFiles);
-        
-        if (validation.errors.length > 0) {
-          console.warn(`⚠️ Validation issues: ${validation.errors.length} files`);
-        }
-      }
-      
-      // Step 7: Git operations and PR creation
+      // Step 6: Git operations and PR creation
       if (!config.dryRun) {
         console.log('\\n=== Step 7: Creating branch and PR ===');
         
