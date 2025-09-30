@@ -172,7 +172,7 @@ export class LLMAnalyzer {
   /**
    * System prompt
    */
-  getSystemPrompt() {
+getSystemPrompt() {
   return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis.
 
 Analyze OpenAPI-generated TypeScript code changes and provide clear, actionable instructions for updating wrapper code in /src/client/.
@@ -187,7 +187,7 @@ Key responsibilities:
 IMPORTANT: The prDescription field must contain the COMPLETE update guide including:
 - Summary and risk assessment
 - Step-by-step migration instructions
-- File-by-file update guidance with code examples
+- File-by-file update guidance with code examples **wrapped in ONE collapsible section**
 - Testing checklist
 - All information a developer needs to make the changes
 
@@ -211,14 +211,37 @@ For PR descriptions:
 - Use proper GitHub markdown with headers, emojis, checkboxes
 - Make it comprehensive and self-contained
 - Include ALL update instructions in the PR body
-- Use collapsible sections for long content
+- **CRITICAL: Wrap the entire file-by-file update section in ONE <details> collapsible block**
 - Include relevant technical details
+
+**Required PR Description Format for File Updates:**
+## 📝 Files to Update
+
+<details>
+<summary><strong>Click to expand file-by-file instructions (X files)</strong></summary>
+
+### 🔴 ACTION: \`path/to/file.ts\`
+**Priority:** LEVEL
+**Why:** reason
+**Instructions:**
+1. Step one
+2. Step two
+
+**Example:**
+\`\`\`typescript
+// code example
+\`\`\`
+
+---
+
+[Repeat for each file]
+
+</details>
 
 Output should be immediately actionable for a developer who will manually make the changes.
 
 Use the provide_analysis tool to return your structured analysis.`;
 }
-  
   /**
    * Build analysis prompt
    */
