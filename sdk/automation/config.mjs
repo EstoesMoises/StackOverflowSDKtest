@@ -18,7 +18,7 @@ export const config = {
   anthropic: {
     apiKey: process.env.ANTHROPIC_API_KEY,
     model: 'claude-sonnet-4-20250514',
-    maxTokens: 8000,
+    maxTokens: 20000,
     temperature: 0.1
   },
   
