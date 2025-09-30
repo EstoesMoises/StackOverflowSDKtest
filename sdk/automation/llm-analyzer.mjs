@@ -83,6 +83,19 @@ Always respond with valid JSON only. Handle all formatting within the JSON value
     return `
 # SDK Analysis Request
 
+## Project Structure
+Base wrapper directory: src/client/
+Wrapper files should be placed in: src/client/
+
+Example file paths (use these exact patterns):
+- src/client/users.ts
+- src/client/questions.ts  
+- src/client/answers.ts
+- src/client/index.ts
+etc.
+
+⚠️ CRITICAL: All file paths in completeFiles must start with "src/client/"
+
 ## Generation Context
 ${JSON.stringify(generationSummary, null, 2)}
 
@@ -94,6 +107,34 @@ ${this.summarizeWrappers(wrapperContext)}
 
 ## Raw Diff Sample
 ${this.limitDiff(diffData.rawDiff, 3000)}
+
+---
+
+⚠️ CRITICAL INSTRUCTIONS FOR FILE GENERATION:
+
+File Path Rules:
+- ALL file paths in completeFiles MUST start with "src/client/"
+- New wrapper files go in src/client/ (e.g., src/client/newEndpoint.ts)
+- Keep the same naming pattern as existing files shown above
+- Use lowercase filenames matching the resource name (users.ts, questions.ts, etc.)
+
+When generating files in automatedChanges.completeFiles:
+- Include the ENTIRE file from start to finish
+- NO placeholders, NO "rest of your code", NO ellipsis (...)
+- Include ALL imports at the top
+- Include ALL existing methods and classes
+- Include ALL type definitions
+- Include the complete file structure
+
+If you need to modify an existing file:
+1. Take the COMPLETE original file content from the "COMPLETE Current Wrapper Files" section above
+2. Apply your modifications (add new methods, update imports, etc.)
+3. Return the ENTIRE modified file with the correct path (src/client/filename.ts)
+
+If you need to create a new file:
+1. Follow the patterns from existing wrapper files
+2. Use the correct path: src/client/filename.ts
+3. Include complete implementation
 
 ---
 
