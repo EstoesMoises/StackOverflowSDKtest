@@ -13,43 +13,30 @@ export class GitHubIntegration {
   /**
    * Create a new branch and commit changes
    */
-  async createBranchAndCommit(analysis, updateGuide) {  // CHANGED: updateResults -> updateGuide
+  async createBranchAndCommit(analysis) {  // FIXED: Removed updateGuide parameter
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const branchName = `${config.branchPrefix}-${timestamp}`;
     
     try {
       console.log(`🌿 Creating branch: ${branchName}`);
       
-      // Ensure we're on the default branch
       execSync(`git checkout ${config.defaultBranch}`, { stdio: 'pipe' });
-      
-      // Pull latest changes
       execSync('git pull origin ' + config.defaultBranch, { stdio: 'pipe' });
-      
-      // Create new branch
       execSync(`git checkout -b ${branchName}`, { stdio: 'pipe' });
-      
-      // Stage all changes
       execSync('git add .', { stdio: 'pipe' });
       
-      // Check if there are changes to commit
       const status = execSync('git status --porcelain', { encoding: 'utf8' }).trim();
       if (!status) {
         console.log('⚠️  No changes to commit');
         return null;
       }
       
-      // Create commit message
-      const commitMessage = this.generateCommitMessage(analysis, updateGuide);  // CHANGED
+      const commitMessage = this.generateCommitMessage(analysis);  // FIXED: Removed updateGuide param
       
-      // Commit changes
       execSync(`git commit -m "${commitMessage}"`, { stdio: 'pipe' });
-      
       console.log(`✅ Committed changes to ${branchName}`);
       
-      // Push branch to remote
       execSync(`git push -u origin ${branchName}`, { stdio: 'pipe' });
-      
       console.log(`🚀 Pushed branch ${branchName} to remote`);
       
       return {
@@ -63,12 +50,9 @@ export class GitHubIntegration {
     }
   }
   
-  /**
-   * Generate commit message based on analysis
-   */
-  generateCommitMessage(analysis, updateGuide) {  // CHANGED: updateResults -> updateGuide
+  generateCommitMessage(analysis) {
     const riskLevel = analysis.riskAssessment.level;
-    const filesAffected = analysis.wrapperUpdateGuide?.affectedFiles?.length || 0;  // CHANGED
+    const filesAffected = analysis.wrapperUpdateGuide?.affectedFiles?.length || 0;
     
     let message = `chore: update SDK wrapper for API changes`;
     
@@ -85,8 +69,7 @@ export class GitHubIntegration {
       '',
       'Generated SDK changes detected and analyzed:',
       `- Risk level: ${riskLevel}`,
-      `- Files affected: ${filesAffected}`,  // CHANGED
-      `- Update guide: ${updateGuide.filename}`  // ADDED
+      `- Files affected: ${filesAffected}`
     ];
     
     if (analysis.impactAnalysis.addedEndpoints?.length > 0) {
@@ -102,20 +85,17 @@ export class GitHubIntegration {
     }
     
     commitLines.push('', `Analyzed by: ${analysis.metadata?.llmModel || 'automated system'}`);
+    commitLines.push('', 'See PR description for detailed update instructions.');
     
     return commitLines.join('\n');
   }
-  
-  /**
-   * Create a pull request using AI-generated description
-   */
-  async createPullRequest(branchName, analysis, updateGuide) {  // CHANGED: removed updateResults, instructionsFile params
+
+  async createPullRequest(branchName, analysis) {
     try {
       console.log('📝 Creating pull request...');
       
       const title = this.generatePRTitle(analysis);
-      // Use the AI-generated PR description directly
-      const body = analysis.prDescription || this.generateFallbackPRBody(analysis, updateGuide);  // CHANGED
+      const body = analysis.prDescription || this.generateFallbackPRBody(analysis);
       
       const response = await this.octokit.pulls.create({
         owner: config.github.owner,
@@ -126,7 +106,6 @@ export class GitHubIntegration {
         body: body
       });
       
-      // Add labels
       if (config.prLabels && config.prLabels.length > 0) {
         await this.octokit.issues.addLabels({
           owner: config.github.owner,
@@ -159,10 +138,161 @@ export class GitHubIntegration {
       };
     }
   }
-  
-  /**
-   * Generate PR title based on analysis
-   */
+
+  generateFallbackPRBody(analysis) {
+    const guide = analysis.wrapperUpdateGuide;
+    const impact = analysis.impactAnalysis;
+    
+    let md = `# 🤖 SDK Wrapper Update Required\n\n`;
+    md += `**Risk Level:** \`${analysis.riskAssessment.level}\`\n\n`;
+    md += `${analysis.summary}\n\n`;
+    
+    if (analysis.riskAssessment.level === 'BREAKING') {
+      md += `> **⚠️ BREAKING CHANGES DETECTED** - Immediate attention required!\n\n`;
+    }
+    
+    // Quick summary
+    md += `## 📊 Quick Summary\n\n`;
+    md += `- **Files affected:** ${guide?.affectedFiles?.length || 0}\n`;
+    md += `- **New endpoints:** ${guide?.newEndpointsToWrap?.length || 0}\n`;
+    md += `- **Migration steps:** ${guide?.migrationSteps?.length || 0}\n`;
+    md += `- **Added endpoints:** ${impact?.addedEndpoints?.length || 0}\n`;
+    md += `- **Modified endpoints:** ${impact?.modifiedEndpoints?.length || 0}\n`;
+    md += `- **Removed endpoints:** ${impact?.removedEndpoints?.length || 0}\n\n`;
+    
+    // Migration steps
+    if (guide?.migrationSteps?.length > 0) {
+      md += `## 🔄 Migration Steps\n\n`;
+      guide.migrationSteps.forEach((step, i) => {
+        md += `${i + 1}. ${step}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Files to update
+    if (guide?.affectedFiles?.length > 0) {
+      md += `## 📝 Files to Update\n\n`;
+      md += `<details>\n<summary><strong>Click to expand file-by-file instructions (${guide.affectedFiles.length} files)</strong></summary>\n\n`;
+      
+      const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+      const sortedFiles = [...guide.affectedFiles].sort((a, b) => 
+        priorityOrder[a.priority] - priorityOrder[b.priority]
+      );
+      
+      for (const file of sortedFiles) {
+        const priorityEmoji = {
+          CRITICAL: '🔴',
+          HIGH: '🟠',
+          MEDIUM: '🟡',
+          LOW: '🟢'
+        }[file.priority];
+        
+        md += `### ${priorityEmoji} ${file.action}: \`src/client/${file.file}\`\n\n`;
+        md += `**Priority:** ${file.priority}\n\n`;
+        
+        if (file.reasoning) {
+          md += `**Why:** ${file.reasoning}\n\n`;
+        }
+        
+        md += `**Instructions:**\n${file.instructions}\n\n`;
+        
+        if (file.codeExample) {
+          md += `**Example:**\n\`\`\`typescript\n${file.codeExample}\n\`\`\`\n\n`;
+        }
+        
+        md += `---\n\n`;
+      }
+      
+      md += `</details>\n\n`;
+    }
+    
+    // New endpoints
+    if (guide?.newEndpointsToWrap?.length > 0) {
+      md += `## ✨ New Endpoints to Wrap\n\n`;
+      md += `<details>\n<summary><strong>Click to expand endpoint details (${guide.newEndpointsToWrap.length} endpoints)</strong></summary>\n\n`;
+      
+      for (const endpoint of guide.newEndpointsToWrap) {
+        md += `### ${endpoint.method} ${endpoint.endpoint}\n\n`;
+        md += `**Generated SDK:** \`${endpoint.generatedPath}\`\n`;
+        md += `**Wrapper file:** \`src/client/${endpoint.suggestedWrapperFile}\`\n`;
+        md += `**Suggested method:** \`${endpoint.suggestedMethodName}\`\n\n`;
+        md += `**Example:**\n\`\`\`typescript\n${endpoint.exampleImplementation}\n\`\`\`\n\n`;
+        md += `---\n\n`;
+      }
+      
+      md += `</details>\n\n`;
+    }
+    
+    // Compatibility notes
+    if (guide?.compatibilityNotes?.length > 0) {
+      md += `## ⚠️ Compatibility Notes\n\n`;
+      guide.compatibilityNotes.forEach(note => {
+        md += `- ${note}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Testing
+    if (analysis.testingGuidance?.length > 0) {
+      md += `## 🧪 Testing Checklist\n\n`;
+      analysis.testingGuidance.forEach(test => {
+        md += `- [ ] ${test}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Breaking changes
+    if (analysis.riskAssessment.breakingChanges?.length > 0) {
+      md += `## 💥 Breaking Changes\n\n`;
+      analysis.riskAssessment.breakingChanges.forEach(change => {
+        md += `- ${change}\n`;
+      });
+      md += `\n`;
+    }
+    
+    // Detailed impact analysis
+    if (impact) {
+      md += `## 📈 Detailed Impact Analysis\n\n`;
+      md += `<details>\n<summary><strong>Click to expand impact details</strong></summary>\n\n`;
+      
+      if (impact.addedEndpoints?.length > 0) {
+        md += `### Added Endpoints\n`;
+        impact.addedEndpoints.forEach(e => md += `- ${e}\n`);
+        md += `\n`;
+      }
+      
+      if (impact.modifiedEndpoints?.length > 0) {
+        md += `### Modified Endpoints\n`;
+        impact.modifiedEndpoints.forEach(e => md += `- ${e}\n`);
+        md += `\n`;
+      }
+      
+      if (impact.removedEndpoints?.length > 0) {
+        md += `### Removed Endpoints\n`;
+        impact.removedEndpoints.forEach(e => md += `- ${e}\n`);
+        md += `\n`;
+      }
+      
+      if (impact.typeChanges?.length > 0) {
+        md += `### Type Changes\n`;
+        impact.typeChanges.forEach(e => md += `- ${e}\n`);
+        md += `\n`;
+      }
+      
+      if (impact.importChanges?.length > 0) {
+        md += `### Import Changes\n`;
+        impact.importChanges.forEach(e => md += `- ${e}\n`);
+        md += `\n`;
+      }
+      
+      md += `</details>\n\n`;
+    }
+    
+    md += `---\n*Automated SDK update - generated by Claude ${analysis.metadata?.llmModel || 'unknown'}*`;
+    
+    return md;
+  }
+
   generatePRTitle(analysis) {
     const riskLevel = analysis.riskAssessment.level;
     
@@ -174,54 +304,7 @@ export class GitHubIntegration {
     
     return `${prefix} Auto-update: SDK wrapper changes (${riskLevel} risk)`;
   }
-  
-  /**
-   * Fallback PR body generation (only used if AI doesn't generate one)
-   */
-  generateFallbackPRBody(analysis, updateGuide) {  // CHANGED: updateResults -> updateGuide
-    const lines = [
-      '# 🤖 Automated SDK Update',
-      '',
-      `**Summary:** ${analysis.summary}`,
-      '',
-      '## 🎯 Risk Assessment',
-      '',
-      `**Level:** \`${analysis.riskAssessment.level}\``,
-      `**Reasoning:** ${analysis.riskAssessment.reasoning}`,
-      ''
-    ];
-    
-    // CHANGED: Show update guide info instead
-    if (updateGuide && updateGuide.filename) {
-      lines.push('## 📋 Update Instructions', '');
-      lines.push(`Detailed update instructions have been generated in \`${updateGuide.filename}\`.`);
-      lines.push('');
-      lines.push('**Summary:**');
-      lines.push(`- Files affected: ${analysis.wrapperUpdateGuide?.affectedFiles?.length || 0}`);
-      lines.push(`- New endpoints: ${analysis.wrapperUpdateGuide?.newEndpointsToWrap?.length || 0}`);
-      lines.push(`- Migration steps: ${analysis.wrapperUpdateGuide?.migrationSteps?.length || 0}`);
-      lines.push('');
-    }
-    
-    // ADDED: Show breaking changes if any
-    if (analysis.riskAssessment.breakingChanges?.length > 0) {
-      lines.push('## ⚠️ Breaking Changes', '');
-      analysis.riskAssessment.breakingChanges.forEach(change => {
-        lines.push(`- ${change}`);
-      });
-      lines.push('');
-    }
-    
-    lines.push('---');
-    lines.push('*This PR was automatically generated by the SDK update automation.*');
-    lines.push(`*Review the \`${updateGuide?.filename || 'WRAPPER_UPDATE_GUIDE.md'}\` file for detailed instructions.*`);
-    
-    return lines.join('\n');
-  }
-  
-  /**
-   * Generate manual PR creation instructions when API fails
-   */
+
   generateManualPRInstructions(branchName, analysis) {
     const lines = [
       '## Manual PR Creation Required',
@@ -240,9 +323,6 @@ export class GitHubIntegration {
     return lines.join('\n');
   }
   
-  /**
-   * Get current git status
-   */
   getCurrentBranch() {
     try {
       return execSync('git branch --show-current', { encoding: 'utf8' }).trim();
@@ -251,9 +331,6 @@ export class GitHubIntegration {
     }
   }
   
-  /**
-   * Check if repository is clean
-   */
   isRepositoryClean() {
     try {
       const status = execSync('git status --porcelain', { encoding: 'utf8' }).trim();
@@ -263,9 +340,6 @@ export class GitHubIntegration {
     }
   }
   
-  /**
-   * Switch back to default branch
-   */
   async switchToDefaultBranch() {
     try {
       execSync(`git checkout ${config.defaultBranch}`, { stdio: 'pipe' });

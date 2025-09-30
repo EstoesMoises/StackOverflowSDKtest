@@ -203,61 +203,61 @@ class SDKUpdater {
       console.log(`🔧 Can automate: ${analysis.automatedChanges?.canAutomate ? 'Yes' : 'No'}`);
       
       // Step 5: Generate update instructions
-      console.log('\n=== Step 5: Generating wrapper update guide ===');
-      const updateGuide = this.generateUpdateGuideFile(analysis);
-
-      console.log(`📋 Update guide saved: ${updateGuide.filename}`);
+    console.log('\n=== Step 5: Preparing update instructions ===');
+    console.log(`Files affected: ${analysis.wrapperUpdateGuide?.affectedFiles?.length || 0}`);
+    console.log(`New endpoints: ${analysis.wrapperUpdateGuide?.newEndpointsToWrap?.length || 0}`);
+    console.log(`Migration steps: ${analysis.wrapperUpdateGuide?.migrationSteps?.length || 0}`);
+    
+    // Step 6: Git operations and PR creation
+    if (!config.dryRun) {
+      console.log('\n=== Step 6: Creating branch and PR ===');
       
-      // Step 6: Git operations and PR creation
-      if (!config.dryRun) {
-        console.log('\\n=== Step 7: Creating branch and PR ===');
+      const gitResult = await this.github.createBranchAndCommit(analysis);
+      
+      if (!gitResult) {
+        console.log('No changes to commit');
+        return this.createResult({ 
+          updated: true, 
+          reason: 'no-git-changes',
+          analysis: analysis
+        });
+      }
+      
+      console.log(`Created branch: ${gitResult.branchName}`);
+      
+      let prResult = null;
+      if (!config.skipPR) {
+        prResult = await this.github.createPullRequest(
+          gitResult.branchName,
+          analysis
+        );
         
-        const gitResult = await this.github.createBranchAndCommit(analysis, updateGuide);
-        
-        if (!gitResult) {
-          console.log('⚠️ No changes to commit');
-          return this.createResult({ 
-            updated: true, 
-            reason: 'no-git-changes',
-            analysis: analysis 
-          });
+        if (prResult.success) {
+          console.log(`Pull request created: ${prResult.url}`);
+        } else {
+          console.log('PR creation failed, manual creation required');
+          console.log(prResult.instructions);
         }
-        
-        console.log(`✅ Created branch: ${gitResult.branchName}`);
-        
-        let prResult = null;
-        if (!config.skipPR) {
-          prResult = await this.github.createPullRequest(
-            gitResult.branchName,
-            analysis,
-            updateGuide
-          );
-          
-          if (prResult.success) {
-            console.log(`✅ Pull request created: ${prResult.url}`);
-          } else {
-            console.log('⚠️ PR creation failed, manual creation required');
-            console.log(prResult.instructions);
-          }
-        }
-        
+      }
+      
+      return this.createResult({
+        updated: true,
+        branchName: gitResult.branchName,
+        pullRequest: prResult,
+        analysis: analysis
+      });
+      
+    } else {
+      console.log('DRY-RUN: Skipping git operations and PR creation');
+      // In dry run, save instructions to a local file for review
+      this.saveLocalInstructions(analysis);
+      
       return this.createResult({
         updated: true,
         dryRun: true,
-        analysis: analysis,
-        updateGuide: updateGuide  // Changed from updateResults and instructionsFile
+        analysis: analysis
       });
-        
-      } else {
-        console.log('🧪 DRY-RUN: Skipping git operations and PR creation');
-        return this.createResult({
-          updated: true,
-          dryRun: true,
-          analysis: analysis,
-          updateResults: updateResults,
-          instructionsFile: instructionsFile
-        });
-      }
+    }
       
     } catch (error) {
       console.error('❌ SDK update failed:', error.message);
