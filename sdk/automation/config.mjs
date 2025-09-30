@@ -14,24 +14,24 @@ export const config = {
   defaultBranch: 'main',
   prLabels: ['auto-generated', 'sdk-update'],
   
-  // OpenAI
-  openai: {
-    apiKey: process.env.OPENAI_API_KEY,
-    model: 'gpt-4o-mini', 
-    maxTokens: 4000,
+  // Anthropic (Claude)
+  anthropic: {
+    apiKey: process.env.ANTHROPIC_API_KEY,
+    model: 'claude-sonnet-4-20250514',
+    maxTokens: 8000,
     temperature: 0.1
   },
   
   // GitHub
   github: {
     token: process.env.GITHUB_TOKEN,
-    repo: process.env.GITHUB_REPOSITORY, // Set by GitHub Actions
+    repo: process.env.GITHUB_REPOSITORY,
     owner: process.env.GITHUB_REPOSITORY?.split('/')[0],
     repoName: process.env.GITHUB_REPOSITORY?.split('/')[1]
   },
   
   // Analysis settings
-  maxFileSize: 50000, // 50KB limit per file for LLM
+  maxFileSize: 50000,
   filePatterns: {
     include: ['**/*.ts', '**/*.js'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/*.test.*', '**/*.spec.*']
@@ -46,7 +46,7 @@ export const config = {
 export function validateConfig() {
   const required = [];
   
-  if (!config.openai.apiKey) required.push('OPENAI_API_KEY');
+  if (!config.anthropic.apiKey) required.push('ANTHROPIC_API_KEY');
   if (!config.github.token) required.push('GITHUB_TOKEN');
   if (!config.github.repo) required.push('GITHUB_REPOSITORY');
   

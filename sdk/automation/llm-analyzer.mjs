@@ -1,11 +1,11 @@
 // llm-analyzer.mjs
-import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import { config } from './config.mjs';
 
 export class LLMAnalyzer {
   constructor() {
-    this.client = new OpenAI({
-      apiKey: config.openai.apiKey
+    this.client = new Anthropic({
+      apiKey: config.anthropic.apiKey
     });
   }
   
@@ -14,26 +14,30 @@ export class LLMAnalyzer {
    */
   async analyzeChanges(diffData, wrapperContext, generationSummary) {
     try {
-      console.log('🤖 Analyzing changes with LLM...');
+      console.log('🤖 Analyzing changes with Claude...');
       
-      const response = await this.client.chat.completions.create({
-        model: config.openai.model,
+      const response = await this.client.messages.create({
+        model: config.anthropic.model,
+        max_tokens: config.anthropic.maxTokens,
+        temperature: config.anthropic.temperature,
+        system: this.getSystemPrompt(),
         messages: [
           {
-            role: "system",
-            content: this.getSystemPrompt()
-          },
-          {
-            role: "user", 
+            role: "user",
             content: this.buildAnalysisPrompt(diffData, wrapperContext, generationSummary)
           }
-        ],
-        temperature: config.openai.temperature,
-        max_tokens: config.openai.maxTokens,
-        response_format: { type: "json_object" } // Force JSON response
+        ]
       });
       
-      const analysis = JSON.parse(response.choices[0].message.content);
+      // Extract JSON from Claude's response
+      const textContent = response.content[0].text;
+      const jsonMatch = textContent.match(/\{[\s\S]*\}/);
+      
+      if (!jsonMatch) {
+        throw new Error('Could not extract JSON from Claude response');
+      }
+      
+      const analysis = JSON.parse(jsonMatch[0]);
       return this.enhanceAnalysis(analysis, diffData, generationSummary);
       
     } catch (error) {
@@ -103,7 +107,7 @@ ${JSON.stringify(generationSummary, null, 2)}
 ${this.summarizeChanges(diffData)}
 
 ## Current Wrapper Structure
-${this.summarizeWrappers(wrapperContext)}
+${this.provideFullWrapperContext(wrapperContext)}
 
 ## Raw Diff Sample
 ${this.limitDiff(diffData.rawDiff, 3000)}
@@ -195,15 +199,27 @@ Focus on completeness and actionability. Generate full working code, not placeho
   /**
    * Summarize wrapper context
    */
-  summarizeWrappers(wrapperContext) {
+  provideFullWrapperContext(wrapperContext) {
     const files = Object.keys(wrapperContext);
     if (files.length === 0) return 'No wrapper files found';
     
-    return files.slice(0, 2).map(file => {
+    const sortedFiles = files.sort((a, b) => {
+      if (a.includes('index.ts')) return -1;
+      if (b.includes('index.ts')) return 1;
+      return a.localeCompare(b);
+    });
+    
+    return sortedFiles.map(file => {
       const content = wrapperContext[file];
-      const preview = content.split('\n').slice(0, 20).join('\n');
-      return `${file}:\n${preview}${content.length > preview.length ? '\n...' : ''}`;
-    }).join('\n\n---\n\n');
+      const lineCount = content.split('\n').length;
+      return `### File: ${file}
+  Location: ${file}
+  Line count: ${lineCount} lines
+  \`\`\`typescript
+  ${content}
+  \`\`\`
+  `;
+    }).join('\n---\n\n');
   }
 
   /**
@@ -222,7 +238,7 @@ Focus on completeness and actionability. Generate full working code, not placeho
       ...analysis,
       metadata: {
         analyzedAt: new Date().toISOString(),
-        llmModel: config.openai.model,
+        llmModel: config.anthropic.model,
         diffSummary: diffData.summary,
         generationSummary: generationSummary,
         analysisMethod: 'llm'

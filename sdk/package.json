@@ -37,17 +37,17 @@
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "dotenv": "^17.2.1",
     "es6-promise": "^4.2.4",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
+    "@octokit/rest": "^22.0.0",
     "@openapitools/openapi-generator-cli": "^2.21.0",
     "@types/node": "^24.1.0",
+    "openai": "^5.21.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
-    "@octokit/rest": "^22.0.0",
-    "openai": "^5.21.0"
-
+    "typescript": "^5.8.3"
   }
 }
