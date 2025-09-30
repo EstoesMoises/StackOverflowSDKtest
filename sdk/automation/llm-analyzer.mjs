@@ -48,13 +48,20 @@ export class LLMAnalyzer {
   getSystemPrompt() {
     return `You are an expert TypeScript/JavaScript developer specializing in SDK wrapper analysis.
 
+⚠️ CRITICAL RULES - NO PLACEHOLDERS ALLOWED:
+1. NEVER use placeholders like "// rest of your code", "// ... existing code ...", "...", or "// rest of the file"
+2. When providing file updates in automatedChanges.completeFiles, you MUST include the ENTIRE file content
+3. Every code block must be production-ready and executable as-is with NO omissions
+4. If you cannot generate the complete file, do not include it in completeFiles
+5. All imports, all methods, all types, all existing code must be preserved and included
+
 Analyze OpenAPI-generated TypeScript code changes and provide a comprehensive analysis as JSON.
 
 Key responsibilities:
 1. Identify breaking changes and compatibility issues
 2. Generate complete, production-ready wrapper methods for new endpoints
 3. Create ready-to-use GitHub PR descriptions with proper markdown
-4. Provide actionable automated changes
+4. Provide actionable automated changes with COMPLETE file contents
 
 For wrapper code generation:
 - Write complete TypeScript methods with proper types, error handling, and JSDoc
@@ -67,7 +74,7 @@ For PR descriptions:
 - Include relevant technical details
 
 Always respond with valid JSON only. Handle all formatting within the JSON values.`;
-  }
+}
   
   /**
    * Build analysis prompt - simplified data presentation
